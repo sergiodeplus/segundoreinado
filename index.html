@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brasil Império · O Segundo Reinado · História</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    imp:{50:'#f0f7f2',100:'#dcefe3',200:'#b9dfc8',300:'#8ac7a4',400:'#57a87c',500:'#348a60',600:'#226e4c',700:'#1b583e',800:'#164634',900:'#123a2c',950:'#0a241b'},
+    gold:{300:'#ecd28a',400:'#dfbc55',500:'#d4af37',600:'#b3922a',700:'#8f7420'},
+    coffee:{300:'#c9a98a',400:'#a97e55',500:'#8a5a35',600:'#6f4e37',700:'#5a3e2b',800:'#4b3621',900:'#3a2a1a'},
+    parch:{50:'#fbf7ee',100:'#f6efdf',200:'#ecdfc4',300:'#ddc9a0'},
+    ink:{700:'#3d3428',800:'#2e271e',900:'#211c15'},
+    royal:{500:'#1e4fa3',600:'#173e82'}
+  },
+  fontFamily:{ display:['"Playfair Display"','Georgia','serif'], sans:['Nunito','ui-sans-serif','system-ui','sans-serif'] },
+  boxShadow:{ card:'0 10px 30px -12px rgb(75 54 33 / .28)', lift:'0 18px 40px -16px rgb(75 54 33 / .38)' }
+}}}
+</script>
+<style>
+  html{scroll-behavior:smooth} body{background:#fbf7ee}
+  .imp-border{height:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='16' viewBox='0 0 26 16'%3E%3Cpath d='M13 2 L23 8 L13 14 L3 8 Z' fill='none' stroke='%23d4af37' stroke-width='2.2'/%3E%3C/svg%3E") repeat-x;background-size:auto 100%}
+  .imp-border-dark{height:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='16' viewBox='0 0 26 16'%3E%3Cpath d='M13 2 L23 8 L13 14 L3 8 Z' fill='none' stroke='%23ecd28a' stroke-width='2.2'/%3E%3C/svg%3E") repeat-x;background-size:auto 100%}
+  .reveal{opacity:0;transform:translateY(16px);transition:all .7s ease}.reveal.on{opacity:1;transform:none}
+  .opt{transition:all .18s ease}.opt:not(:disabled):hover{transform:translateY(-2px)}
+  .opt.correct{background:#e7f4e4!important;border-color:#4c9a52!important;color:#2c6e33!important}
+  .opt.wrong{background:#fbe9e4!important;border-color:#c0563a!important;color:#8c3a22!important}
+  .topic-chip.active{background:#1b583e;color:#fff;border-color:#1b583e}
+  .stat-bar{transition:width .6s ease}
+  ::-webkit-scrollbar{width:10px;height:8px}::-webkit-scrollbar-thumb{background:#b9dfc8;border-radius:8px}::-webkit-scrollbar-track{background:#f6efdf}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}.floaty{animation:floaty 5s ease-in-out infinite}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}.pop{animation:pop .35s ease}
+</style>
+</head>
+<body class="font-sans text-ink-800 antialiased">
+
+<canvas id="confetti" class="fixed inset-0 pointer-events-none z-[70]"></canvas>
+
+<!-- ══════════ PORTÃO DO PAÇO (LOGIN) ══════════ -->
+<div id="loginOverlay" class="fixed inset-0 z-50 bg-imp-950/92 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="w-full max-w-md pop">
+    <div class="bg-parch-50 rounded-3xl shadow-lift overflow-hidden">
+      <div class="imp-border"></div>
+      <div class="p-8 text-center">
+        <div class="text-5xl mb-1 floaty">👑</div>
+        <h1 class="font-display text-4xl font-black text-imp-800">Brasil Império</h1>
+        <p class="text-imp-700 font-bold mt-1">O Segundo Reinado · 1840–1889</p>
+        <p class="text-sm text-ink-700 mt-3">Antes de entrar no paço imperial, diga-nos seu nome e sua turma.</p>
+        <form id="loginForm" class="mt-6 text-left space-y-4">
+          <div>
+            <label class="block text-sm font-extrabold text-imp-800 mb-1" for="inpNome">Seu nome</label>
+            <input id="inpNome" list="nomesHint" required maxlength="40" placeholder="Ex.: João Santos"
+              class="w-full rounded-xl border-2 border-imp-200 bg-white px-4 py-3 font-semibold focus:border-gold-500 focus:outline-none">
+            <datalist id="nomesHint"></datalist>
+          </div>
+          <div>
+            <label class="block text-sm font-extrabold text-imp-800 mb-1" for="inpTurma">Sua turma</label>
+            <input id="inpTurma" list="turmasHint" required maxlength="20" placeholder="Ex.: 8º A"
+              class="w-full rounded-xl border-2 border-imp-200 bg-white px-4 py-3 font-semibold focus:border-gold-500 focus:outline-none">
+            <datalist id="turmasHint"><option value="8º A"></option><option value="8º B"></option><option value="8º C"></option><option value="8º D"></option></datalist>
+          </div>
+          <div id="loginErro" class="hidden mt-3 text-sm font-bold text-red-700 bg-red-100 border border-red-300 rounded-xl px-4 py-2"></div>
+          <button type="button" id="btnEntrar" class="w-full rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-extrabold py-3.5 text-lg shadow-card transition">Entrar no paço →</button>
+        </form>
+      </div>
+      <div class="imp-border"></div>
+    </div>
+    <p class="text-center text-imp-200 text-xs mt-4">Material didático de História · Ensino Fundamental · uso escolar</p>
+  </div>
+</div>
+
+<!-- ══════════ CABEÇALHO ══════════ -->
+<header class="sticky top-0 z-40 bg-imp-900/95 backdrop-blur text-white shadow-card">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3">
+    <a href="#inicio" class="font-display text-2xl font-black text-gold-300 shrink-0">Ⅱ Reinado</a>
+    <nav class="flex items-center gap-1 text-sm font-bold overflow-x-auto ml-2">
+      <a href="#inicio"   class="px-3 py-2 rounded-lg hover:bg-imp-800 whitespace-nowrap">Início</a>
+      <a href="#historia" class="px-3 py-2 rounded-lg hover:bg-imp-800 whitespace-nowrap">História</a>
+      <a href="#quiz"     class="px-3 py-2 rounded-lg hover:bg-imp-800 whitespace-nowrap">Quiz</a>
+      <a href="#rpg"      class="px-3 py-2 rounded-lg hover:bg-imp-800 whitespace-nowrap">Mini-RPG</a>
+      <a href="#mural"    class="px-3 py-2 rounded-lg hover:bg-imp-800 whitespace-nowrap">Mural</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2 shrink-0">
+      <span id="chipUser" class="hidden sm:inline-flex items-center gap-1.5 bg-imp-800 rounded-full px-3 py-1.5 text-xs font-bold text-gold-300"> —</span>
+      <button id="btnTrocar" class="text-xs font-bold underline decoration-gold-400 underline-offset-4 hover:text-gold-300">trocar</button>
+    </div>
+  </div>
+  <div class="imp-border-dark"></div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4">
+
+  <!-- ══════════ INÍCIO / TEXTO INTRODUTÓRIO ══════════ -->
+  <section id="inicio" class="pt-12 pb-16">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+      <div class="reveal on">
+        <span class="inline-block bg-gold-500/15 text-gold-700 border border-gold-500/40 rounded-full px-4 py-1 text-xs font-extrabold tracking-widest uppercase">História · Brasil Império</span>
+        <h1 class="font-display text-4xl sm:text-5xl font-black text-imp-900 leading-tight mt-4">
+          Segundo Reinado: o império movido a <span class="text-coffee-600">café</span> e sustentado pela <span class="text-coffee-600">escravidão</span>
+        </h1>
+        <p class="mt-5 text-lg text-ink-700 leading-relaxed">
+          Entre <b>1840 e 1889</b>, o Brasil foi governado por <b>dom Pedro II</b>, coroado ainda adolescente após o
+          <b>Golpe da Maioridade</b>. Foram 49 anos de monarquia parlamentar, com liberais e conservadores se alternando no poder,
+          enquanto o <b>café</b> virava o "ouro verde" da economia e o trabalho <b>escravizado</b> sustentava as fazendas —
+          até que guerras, leis abolicionistas, a imigração europeia e a propaganda republicana mudaram tudo:
+          em <b>13 de maio de 1888</b> a escravidão foi abolida e, em <b>15 de novembro de 1889</b>, nasceu a República.
+        </p>
+        <div class="flex flex-wrap gap-3 mt-7">
+          <a href="#historia" class="rounded-xl bg-imp-700 hover:bg-imp-800 text-white font-extrabold px-6 py-3 shadow-card transition">📜 Explorar a história</a>
+          <a href="#quiz" class="rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-extrabold px-6 py-3 shadow-card transition">🏆 Ir para o quiz</a>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mt-9 text-center">
+          <div class="bg-white rounded-2xl p-4 shadow-card"><div class="font-display text-2xl font-black text-imp-700">49</div><div class="text-xs font-bold text-ink-700">anos de reinado</div></div>
+          <div class="bg-white rounded-2xl p-4 shadow-card"><div class="font-display text-2xl font-black text-coffee-600">1888</div><div class="text-xs font-bold text-ink-700">Lei Áurea</div></div>
+          <div class="bg-white rounded-2xl p-4 shadow-card"><div class="font-display text-2xl font-black text-royal-500">1889</div><div class="text-xs font-bold text-ink-700">Proclamação da República</div></div>
+        </div>
+      </div>
+      <figure class="reveal on bg-gradient-to-b from-parch-100 to-parch-200 rounded-3xl p-6 shadow-lift border border-parch-300">
+        <div id="heroArt"></div>
+        <figcaption class="text-center text-sm text-ink-700 font-semibold mt-3">A coroa imperial e o ramo de café: o símbolo de um império agrícola.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="imp-border mb-4"></div>
+
+  <!-- ══════════ HISTÓRIA ══════════ -->
+  <section id="historia" class="py-14">
+    <div class="text-center reveal">
+      <h2 class="font-display text-3xl sm:text-4xl font-black text-imp-900">A História, Tópico a Tópico</h2>
+      <p class="text-ink-700 mt-2">Escolha um tema abaixo. Cada tópico traz textos, mapas e ilustrações.</p>
+    </div>
+    <div id="topicChips" class="sticky top-16 z-30 bg-parch-50/95 backdrop-blur py-3 mt-6 flex gap-2 overflow-x-auto reveal"></div>
+    <div id="topicBody" class="mt-6"></div>
+  </section>
+
+  <div class="imp-border mb-4"></div>
+
+  <!-- ══════════ QUIZ ══════════ -->
+  <section id="quiz" class="py-14">
+    <div class="text-center reveal">
+      <h2 class="font-display text-3xl sm:text-4xl font-black text-imp-900">Quiz do Império 🏆</h2>
+      <p class="text-ink-700 mt-2">20 perguntas sobre todo o Segundo Reinado. Seu progresso é salvo automaticamente — pode fechar e voltar depois!</p>
+    </div>
+    <div id="quizBox" class="max-w-3xl mx-auto mt-8"></div>
+  </section>
+
+  <div class="imp-border mb-4"></div>
+
+  <!-- ══════════ MINI-RPG ══════════ -->
+  <section id="rpg" class="py-14">
+    <div class="text-center reveal">
+      <h2 class="font-display text-3xl sm:text-4xl font-black text-imp-900">Mini-RPG: Uma Vida no Segundo Reinado</h2>
+      <p class="text-ink-700 mt-2">Escolha quem você é neste império e faça escolhas que mudam seu destino.</p>
+    </div>
+    <div id="rpgBox" class="max-w-3xl mx-auto mt-8"></div>
+  </section>
+
+  <div class="imp-border mb-4"></div>
+
+  <!-- ══════════ MURAL ══════════ -->
+  <section id="mural" class="py-14">
+    <div class="text-center reveal">
+      <h2 class="font-display text-3xl sm:text-4xl font-black text-imp-900">Mural dos Visitantes ☕</h2>
+      <p class="text-ink-700 mt-2">Estudantes que já entraram no paço, neste computador. <span id="muralCount" class="font-extrabold text-imp-700"></span></p>
+    </div>
+    <div id="muralList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8"></div>
+  </section>
+</main>
+
+<footer class="bg-imp-950 text-imp-200 mt-10">
+  <div class="imp-border-dark"></div>
+  <div class="max-w-6xl mx-auto px-4 py-8 text-center text-sm font-semibold">👑 Material didático de História · Segundo Reinado no Brasil · uso escolar</div>
+</footer>
+
+<script>
+/* ═══════════ UTILIDADES ═══════════ */
+const $ = s => document.querySelector(s);
+const LS = { get(k,d){ try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d} },
+             set(k,v){ try{localStorage.setItem(k,JSON.stringify(v))}catch(e){} },
+             del(k){ try{localStorage.removeItem(k)}catch(e){} } };
+let CURRENT = LS.get('reinado_current_v1', null);
+const quizKey = () => 'reinado_quiz_v1_' + CURRENT.n + '_' + CURRENT.t;
+
+/* ═══════════ ILUSTRAÇÕES SVG (estilo "gravura antiga") ═══════════ */
+const INK='#4b3621', PAP='#f6efdf', GOLD='#d4af37', GREEN='#1b583e', COF='#6f4e37';
+const SVG = {
+coroa: `<svg viewBox="0 0 220 170" class="w-full h-auto">
+  <path d="M60 96 Q60 40 110 34 Q160 40 160 96 Z" fill="#8c1d2c"/>
+  <g fill="none" stroke="${GOLD}" stroke-width="7" stroke-linecap="round">
+    <path d="M60 96 Q62 44 110 36"/><path d="M160 96 Q158 44 110 36"/><path d="M110 36 V96"/><path d="M84 96 Q86 50 110 38"/><path d="M136 96 Q134 50 110 38"/>
+  </g>
+  <circle cx="110" cy="26" r="9" fill="${GOLD}" stroke="${INK}" stroke-width="3"/><path d="M110 12 v8 M106 16 h8" stroke="${INK}" stroke-width="3"/>
+  <rect x="52" y="96" width="116" height="26" rx="6" fill="${GOLD}" stroke="${INK}" stroke-width="3"/>
+  <g><circle cx="76" cy="109" r="6" fill="#1b583e"/><circle cx="110" cy="109" r="6" fill="#8c1d2c"/><circle cx="144" cy="109" r="6" fill="#1e4fa3"/></g>
+  <path d="M40 140 q30 14 70 14 q40 0 70 -14" fill="none" stroke="${GREEN}" stroke-width="5"/>
+  <g fill="${GREEN}"><ellipse cx="52" cy="146" rx="10" ry="5" transform="rotate(-20 52 146)"/><ellipse cx="168" cy="146" rx="10" ry="5" transform="rotate(20 168 146)"/></g>
+  <g fill="#8c1d2c"><circle cx="70" cy="152" r="4"/><circle cx="150" cy="152" r="4"/></g>
+</svg>`,
+mapaBrasil: `<svg viewBox="0 0 340 300" class="w-full h-auto">
+  <rect width="340" height="300" rx="18" fill="#dcefe3"/>
+  <path d="M95 35 Q140 18 178 40 Q212 56 238 76 Q268 96 272 130 Q274 162 256 186 Q240 212 226 236 Q210 264 184 276 Q158 288 138 270 Q118 254 104 230 Q84 200 70 170 Q54 140 60 110 Q64 78 76 58 Q84 44 95 35 Z" fill="${PAP}" stroke="${GREEN}" stroke-width="3"/>
+  <g font-family="Nunito" font-weight="800" font-size="11" fill="#123a2c">
+    <circle cx="216" cy="192" r="6" fill="#8c1d2c"/><text x="226" y="196">Corte (Rio de Janeiro)</text>
+    <circle cx="252" cy="112" r="6" fill="#8c1d2c"/><text x="196" y="102">Pernambuco (Praieira)</text>
+    <circle cx="200" cy="200" r="5" fill="${COF}"/><text x="140" y="216">Vale do Paraíba</text>
+    <circle cx="176" cy="210" r="5" fill="${COF}"/><text x="112" y="228">Oeste Paulista</text>
+    <circle cx="120" cy="238" r="5" fill="#1e4fa3"/><text x="60" y="256">Mato Grosso (guerra)</text>
+    <circle cx="160" cy="262" r="5" fill="#1e4fa3"/><text x="168" y="270">Rio Grande do Sul</text>
+  </g>
+  <text x="120" y="70" font-family="Playfair Display" font-weight="700" font-size="14" fill="${GREEN}">IMPÉRIO DO BRASIL</text>
+  <text x="10" y="294" font-family="Nunito" font-size="9" fill="#1b583e">Mapa ilustrativo (sem escala)</text>
+</svg>`,
+mapaCafe: `<svg viewBox="0 0 340 300" class="w-full h-auto">
+  <rect width="340" height="300" rx="18" fill="#dcefe3"/>
+  <path d="M95 35 Q140 18 178 40 Q212 56 238 76 Q268 96 272 130 Q274 162 256 186 Q240 212 226 236 Q210 264 184 276 Q158 288 138 270 Q118 254 104 230 Q84 200 70 170 Q54 140 60 110 Q64 78 76 58 Q84 44 95 35 Z" fill="${PAP}" stroke="${GREEN}" stroke-width="3"/>
+  <circle cx="204" cy="198" r="9" fill="${COF}"/><text x="214" y="194" font-family="Nunito" font-weight="800" font-size="10.5" fill="#123a2c">Vale do Paraíba (1830+)</text>
+  <g fill="none" stroke="#8c1d2c" stroke-width="4" stroke-dasharray="7 5">
+    <path d="M198 202 Q170 206 152 214"/><path d="M202 206 Q190 230 178 244"/><path d="M208 194 Q186 178 170 172"/>
+  </g>
+  <g fill="#8c1d2c"><path d="M150 210 l10 4 -8 6 Z"/><path d="M176 240 l10 4 -8 6 Z"/><path d="M168 168 l10 4 -8 6 Z"/></g>
+  <circle cx="148" cy="218" r="8" fill="${GOLD}" stroke="${INK}" stroke-width="2.5"/><text x="96" y="236" font-family="Nunito" font-weight="800" font-size="10.5" fill="#123a2c">Oeste Paulista (1870+)</text>
+  <circle cx="174" cy="250" r="7" fill="${GOLD}" stroke="${INK}" stroke-width="2.5"/><text x="182" y="258" font-family="Nunito" font-weight="800" font-size="10.5" fill="#123a2c">Norte do Paraná</text>
+  <circle cx="166" cy="170" r="7" fill="${GOLD}" stroke="${INK}" stroke-width="2.5"/><text x="120" y="162" font-family="Nunito" font-weight="800" font-size="10.5" fill="#123a2c">Zona da Mata (MG)</text>
+  <g stroke="${COF}" stroke-width="2.5" fill="none"><path d="M250 220 q8 -14 16 0 M258 220 v10"/><path d="M272 232 q8 -14 16 0 M280 232 v10"/></g>
+  <text x="10" y="294" font-family="Nunito" font-size="9" fill="#1b583e">A marcha do café: do Vale do Paraíba para o oeste (setas)</text>
+</svg>`,
+mapaGuerra: `<svg viewBox="0 0 340 300" class="w-full h-auto">
+  <rect width="340" height="300" rx="18" fill="#dcefe3"/>
+  <path d="M250 20 Q320 40 326 120 Q330 200 300 260 L340 280 L340 0 L250 0 Z" fill="${PAP}" stroke="${GREEN}" stroke-width="2.5"/>
+  <path d="M96 90 Q140 78 160 110 Q176 140 158 172 Q140 202 108 196 Q76 190 70 152 Q66 112 96 90 Z" fill="#ecdfc4" stroke="${COF}" stroke-width="3"/>
+  <path d="M60 210 Q110 196 150 214 Q190 232 180 268 Q170 296 120 296 L40 296 Q36 244 60 210 Z" fill="#ecdfc4" stroke="${COF}" stroke-width="3"/>
+  <path d="M196 226 Q226 218 236 244 Q244 268 224 284 Q200 296 188 274 Q180 250 196 226 Z" fill="#ecdfc4" stroke="${COF}" stroke-width="3"/>
+  <g font-family="Nunito" font-weight="800" font-size="11" fill="#123a2c">
+    <text x="92" y="146">PARAGUAI</text><text x="76" y="256">ARGENTINA</text><text x="196" y="258">URUGUAI</text><text x="272" y="60">BRASIL</text>
+    <circle cx="112" cy="118" r="5" fill="#8c1d2c"/><text x="120" y="114">Assunção</text>
+    <circle cx="128" cy="168" r="5" fill="#8c1d2c"/><text x="136" y="166">Humaitá</text>
+    <circle cx="150" cy="196" r="5" fill="#8c1d2c"/><text x="158" y="200">Tuiuti</text>
+  </g>
+  <path d="M214 250 Q190 226 168 208 Q150 194 138 178" fill="none" stroke="#1e4fa3" stroke-width="4" stroke-dasharray="8 5"/>
+  <path d="M136 176 l-2 -12 12 6 Z" fill="#1e4fa3"/>
+  <text x="216" y="244" font-family="Nunito" font-weight="800" font-size="10" fill="#173e82">rota dos Aliados</text>
+  <text x="10" y="294" font-family="Nunito" font-size="9" fill="#1b583e">Teatro da Guerra do Paraguai (mapa ilustrativo)</text>
+</svg>`,
+mapaImigracao: `<svg viewBox="0 0 340 240" class="w-full h-auto">
+  <rect width="340" height="240" rx="18" fill="#cfe3ef"/>
+  <path d="M0 0 H96 Q110 40 92 70 Q76 96 84 130 Q90 160 60 180 Q30 196 0 186 Z" fill="${PAP}" stroke="${COF}" stroke-width="2.5"/>
+  <path d="M340 40 Q290 50 276 90 Q264 130 282 170 Q296 204 340 214 Z" fill="${PAP}" stroke="${GREEN}" stroke-width="2.5"/>
+  <g font-family="Nunito" font-weight="800" font-size="10.5" fill="#123a2c">
+    <circle cx="40" cy="50" r="5" fill="#8c1d2c"/><text x="48" y="46">Alemanha</text>
+    <circle cx="30" cy="96" r="5" fill="#8c1d2c"/><text x="38" y="92">Portugal</text>
+    <circle cx="46" cy="130" r="5" fill="#8c1d2c"/><text x="54" y="126">Espanha</text>
+    <circle cx="66" cy="156" r="5" fill="#8c1d2c"/><text x="74" y="152">Itália</text>
+    <circle cx="300" cy="150" r="6" fill="${COF}"/><text x="240" y="170">Santos</text>
+    <circle cx="312" cy="120" r="6" fill="${COF}"/><text x="252" y="112">Rio de Janeiro</text>
+  </g>
+  <g fill="none" stroke="#8c1d2c" stroke-width="3.5" stroke-dasharray="7 5">
+    <path d="M52 56 Q160 40 296 116"/><path d="M74 152 Q170 170 294 148"/>
+  </g>
+  <g><path d="M150 120 q22 -12 44 0 l-6 16 h-32 Z" fill="${INK}"/><rect x="166" y="98" width="8" height="16" fill="${INK}"/><path d="M170 92 q6 -6 12 -2" stroke="#9aa5ae" stroke-width="4" fill="none"/></g>
+  <g stroke="#ffffff" stroke-width="2.5" fill="none" opacity=".9"><path d="M120 200 q10 -8 20 0 t20 0"/><path d="M210 210 q10 -8 20 0 t20 0"/></g>
+  <text x="10" y="234" font-family="Nunito" font-size="9" fill="#173e82">Travessia do Atlântico: navios a vapor traziam os imigrantes (mapa ilustrativo)</text>
+</svg>`,
+mapaQuilombos: `<svg viewBox="0 0 340 300" class="w-full h-auto">
+  <rect width="340" height="300" rx="18" fill="#dcefe3"/>
+  <path d="M95 35 Q140 18 178 40 Q212 56 238 76 Q268 96 272 130 Q274 162 256 186 Q240 212 226 236 Q210 264 184 276 Q158 288 138 270 Q118 254 104 230 Q84 200 70 170 Q54 140 60 110 Q64 78 76 58 Q84 44 95 35 Z" fill="${PAP}" stroke="${GREEN}" stroke-width="3"/>
+  <g fill="#8c1d2c">
+    <circle cx="150" cy="90" r="4"/><circle cx="190" cy="120" r="4"/><circle cx="230" cy="150" r="4"/><circle cx="170" cy="160" r="4"/>
+    <circle cx="130" cy="190" r="4"/><circle cx="200" cy="200" r="4"/><circle cx="160" cy="230" r="4"/><circle cx="215" cy="225" r="4"/><circle cx="120" cy="140" r="4"/><circle cx="245" cy="185" r="4"/>
+  </g>
+  <circle cx="206" cy="212" r="7" fill="${GOLD}" stroke="${INK}" stroke-width="2.5"/>
+  <text x="150" y="248" font-family="Nunito" font-weight="800" font-size="10.5" fill="#123a2c">Quilombo do Jabaquara (Santos)</text>
+  <text x="96" y="60" font-family="Nunito" font-weight="800" font-size="11" fill="#8c1d2c">● quilombos em todas as províncias</text>
+  <text x="10" y="294" font-family="Nunito" font-size="9" fill="#1b583e">Distribuição ilustrativa: havia quilombos perto de cidades e no interior das matas</text>
+</svg>`,
+cafezal: `<svg viewBox="0 0 320 170" class="w-full h-auto">
+  <rect width="320" height="170" rx="18" fill="#f6efdf"/>
+  <circle cx="272" cy="38" r="18" fill="${GOLD}"/>
+  <g stroke="${GREEN}" stroke-width="3" fill="none">
+    <path d="M20 130 q14 -22 28 0"/><path d="M64 130 q14 -22 28 0"/><path d="M108 130 q14 -22 28 0"/><path d="M152 130 q14 -22 28 0"/><path d="M196 130 q14 -22 28 0"/><path d="M240 130 q14 -22 28 0"/>
+  </g>
+  <g fill="#8c1d2c"><circle cx="34" cy="120" r="3"/><circle cx="78" cy="120" r="3"/><circle cx="122" cy="120" r="3"/><circle cx="166" cy="120" r="3"/><circle cx="210" cy="120" r="3"/><circle cx="254" cy="120" r="3"/></g>
+  <g stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round">
+    <path d="M60 96 v26 M60 104 l-12 10 M60 104 l12 8"/><circle cx="60" cy="90" r="6" fill="${INK}"/>
+    <path d="M150 98 v24 M150 104 l-10 12 M150 104 l14 6"/><circle cx="150" cy="92" r="6" fill="${INK}"/>
+    <path d="M44 116 l-8 14 M164 110 l10 12"/>
+  </g>
+  <path d="M20 146 h280" stroke="${COF}" stroke-width="4"/>
+</svg>`,
+navio: `<svg viewBox="0 0 320 160" class="w-full h-auto">
+  <rect width="320" height="160" rx="18" fill="#cfe3ef"/>
+  <path d="M50 96 q10 26 40 30 h140 q30 -4 42 -32 l-14 4 q-10 18 -30 20 H92 q-22 -4 -28 -22 Z" fill="${INK}"/>
+  <rect x="150" y="42" width="12" height="40" fill="#8c1d2c"/>
+  <path d="M156 34 q10 -8 20 -2" stroke="#9aa5ae" stroke-width="5" fill="none"/>
+  <rect x="112" y="70" width="90" height="16" rx="4" fill="${PAP}" stroke="${INK}" stroke-width="2.5"/>
+  <g fill="${PAP}"><circle cx="126" cy="78" r="3"/><circle cx="146" cy="78" r="3"/><circle cx="166" cy="78" r="3"/><circle cx="186" cy="78" r="3"/></g>
+  <rect x="96" y="52" width="4" height="44" fill="${INK}"/><rect x="216" y="52" width="4" height="44" fill="${INK}"/>
+  <path d="M100 56 L140 74 M216 56 L180 74" stroke="${INK}" stroke-width="2"/>
+  <g stroke="#ffffff" stroke-width="2.5" fill="none" opacity=".9"><path d="M30 138 q10 -8 20 0 t20 0"/><path d="M230 140 q10 -8 20 0 t20 0"/></g>
+</svg>`,
+trem: `<svg viewBox="0 0 320 150" class="w-full h-auto">
+  <rect width="320" height="150" rx="18" fill="#f6efdf"/>
+  <path d="M20 118 h280" stroke="${INK}" stroke-width="4"/><g stroke="${INK}" stroke-width="3"><path d="M30 124 v8 M60 124 v8 M90 124 v8 M120 124 v8 M150 124 v8 M180 124 v8 M210 124 v8 M240 124 v8 M270 124 v8"/></g>
+  <rect x="40" y="70" width="70" height="34" rx="6" fill="#8c1d2c" stroke="${INK}" stroke-width="3"/>
+  <rect x="96" y="52" width="30" height="26" rx="4" fill="#8c1d2c" stroke="${INK}" stroke-width="3"/>
+  <rect x="52" y="46" width="12" height="26" fill="${INK}"/><path d="M58 38 q10 -8 18 0" stroke="#9aa5ae" stroke-width="5" fill="none"/>
+  <circle cx="58" cy="108" r="12" fill="${INK}"/><circle cx="92" cy="108" r="12" fill="${INK}"/><circle cx="112" cy="110" r="8" fill="${INK}"/>
+  <rect x="140" y="76" width="70" height="28" rx="4" fill="${COF}" stroke="${INK}" stroke-width="3"/>
+  <g fill="${PAP}" stroke="${INK}" stroke-width="2"><rect x="150" y="62" width="16" height="16" rx="3"/><rect x="170" y="62" width="16" height="16" rx="3"/><rect x="190" y="62" width="14" height="16" rx="3"/></g>
+  <circle cx="156" cy="108" r="9" fill="${INK}"/><circle cx="194" cy="108" r="9" fill="${INK}"/>
+  <rect x="226" y="76" width="60" height="28" rx="4" fill="${COF}" stroke="${INK}" stroke-width="3"/>
+  <g fill="${PAP}" stroke="${INK}" stroke-width="2"><rect x="236" y="62" width="16" height="16" rx="3"/><rect x="256" y="62" width="16" height="16" rx="3"/></g>
+  <circle cx="242" cy="108" r="9" fill="${INK}"/><circle cx="272" cy="108" r="9" fill="${INK}"/>
+</svg>`,
+fazenda: `<svg viewBox="0 0 380 210" class="w-full h-auto">
+  <rect width="380" height="210" rx="18" fill="#f6efdf"/>
+  <circle cx="344" cy="30" r="14" fill="${GOLD}"/>
+  <rect x="18" y="60" width="70" height="44" fill="${PAP}" stroke="${INK}" stroke-width="3"/>
+  <path d="M14 60 L53 34 L92 60 Z" fill="#8c1d2c" stroke="${INK}" stroke-width="3"/>
+  <g fill="${INK}"><rect x="30" y="74" width="10" height="12"/><rect x="48" y="74" width="10" height="12"/><rect x="66" y="74" width="10" height="12"/></g>
+  <text x="24" y="120" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">1 · casa-sede</text>
+  <g><rect x="20" y="132" width="56" height="18" fill="${COF}" stroke="${INK}" stroke-width="2.5"/><path d="M18 132 L48 120 L78 132" fill="none" stroke="${INK}" stroke-width="2.5"/></g>
+  <text x="20" y="164" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">2 · senzala / colônias</text>
+  <g stroke="${GREEN}" stroke-width="2.5" fill="none"><path d="M110 90 q8 -12 16 0"/><path d="M134 90 q8 -12 16 0"/><path d="M110 108 q8 -12 16 0"/><path d="M134 108 q8 -12 16 0"/></g>
+  <text x="104" y="126" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">3 · cafezal</text>
+  <rect x="180" y="96" width="70" height="26" fill="#c9a98a" stroke="${INK}" stroke-width="3"/>
+  <g stroke="${INK}" stroke-width="2"><path d="M192 100 l8 18 M210 100 l8 18 M228 100 l8 18"/></g>
+  <text x="180" y="138" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">4 · terreiro (secar)</text>
+  <rect x="266" y="84" width="52" height="38" fill="${PAP}" stroke="${INK}" stroke-width="3"/><path d="M262 84 L292 66 L322 84 Z" fill="#8c1d2c" stroke="${INK}" stroke-width="3"/>
+  <circle cx="292" cy="104" r="10" fill="${GOLD}" stroke="${INK}" stroke-width="2.5"/><path d="M292 96 v16 M284 104 h16" stroke="${INK}" stroke-width="2"/>
+  <text x="258" y="138" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">5 · máquinas + tulha</text>
+  <g><path d="M330 150 h40" stroke="${INK}" stroke-width="3"/><rect x="336" y="132" width="26" height="14" fill="${COF}" stroke="${INK}" stroke-width="2.5"/></g>
+  <text x="316" y="170" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">6 · trem → porto</text>
+  <path d="M20 186 h340" stroke="${COF}" stroke-width="3"/>
+</svg>`,
+leiAurea: `<svg viewBox="0 0 200 160" class="w-full h-auto">
+  <rect x="40" y="26" width="120" height="104" fill="${PAP}" stroke="${INK}" stroke-width="3"/>
+  <rect x="30" y="18" width="14" height="120" rx="7" fill="#8c1d2c" stroke="${INK}" stroke-width="2.5"/>
+  <rect x="156" y="18" width="14" height="120" rx="7" fill="#8c1d2c" stroke="${INK}" stroke-width="2.5"/>
+  <text x="100" y="56" text-anchor="middle" font-family="Playfair Display" font-weight="900" font-size="17" fill="${GREEN}">LEI ÁUREA</text>
+  <text x="100" y="72" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">13 de maio de 1888</text>
+  <path d="M56 86 h88 M56 96 h88 M56 106 h60" stroke="${INK}" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M132 116 q18 -22 30 -34 l6 6 q-14 12 -30 34 Z" fill="${GOLD}" stroke="${INK}" stroke-width="2.5"/>
+</svg>`,
+republica: `<svg viewBox="0 0 240 150" class="w-full h-auto">
+  <rect x="20" y="30" width="80" height="52" fill="${GREEN}" stroke="${INK}" stroke-width="3"/>
+  <path d="M60 40 L92 56 L60 72 L28 56 Z" fill="${GOLD}"/><circle cx="60" cy="56" r="9" fill="${PAP}" stroke="${INK}" stroke-width="2"/>
+  <rect x="20" y="20" width="4" height="110" fill="${INK}"/>
+  <path d="M112 56 h20 m-8 -8 l8 8 -8 8" stroke="${INK}" stroke-width="4" fill="none"/>
+  <rect x="144" y="30" width="80" height="52" fill="${GREEN}" stroke="${INK}" stroke-width="3"/>
+  <path d="M184 40 L216 56 L184 72 L152 56 Z" fill="${GOLD}"/><circle cx="184" cy="56" r="10" fill="#1e4fa3"/><path d="M175 56 q9 -6 18 0" stroke="#ffffff" stroke-width="2.5" fill="none"/>
+  <rect x="144" y="20" width="4" height="110" fill="${INK}"/>
+  <text x="60" y="100" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">Império</text>
+  <text x="184" y="100" text-anchor="middle" font-family="Nunito" font-weight="800" font-size="10" fill="${INK}">República (1889)</text>
+</svg>`,
+oca: `<svg viewBox="0 0 200 140" class="w-full h-auto">
+  <path d="M40 96 Q100 20 160 96 Z" fill="${COF}" stroke="${INK}" stroke-width="3"/>
+  <path d="M52 96 Q100 34 148 96" fill="none" stroke="${PAP}" stroke-width="2.5" stroke-dasharray="6 5"/>
+  <rect x="88" y="70" width="24" height="26" fill="${INK}"/>
+  <path d="M168 60 q14 -18 4 -34 M172 60 q-2 -20 12 -30" stroke="${INK}" stroke-width="3" fill="none"/>
+  <path d="M30 108 h140" stroke="${GREEN}" stroke-width="4"/>
+  <g fill="${GREEN}"><ellipse cx="36" cy="100" rx="9" ry="4"/><ellipse cx="164" cy="100" rx="9" ry="4"/></g>
+</svg>`,
+quilombo: `<svg viewBox="0 0 220 150" class="w-full h-auto">
+  <path d="M20 120 Q70 60 120 92 Q160 116 200 96 L200 130 H20 Z" fill="${GREEN}" stroke="${INK}" stroke-width="3"/>
+  <g><rect x="60" y="86" width="26" height="18" fill="${COF}" stroke="${INK}" stroke-width="2.5"/><path d="M57 86 L73 74 L89 86" fill="none" stroke="${INK}" stroke-width="2.5"/></g>
+  <g><rect x="110" y="94" width="26" height="18" fill="${COF}" stroke="${INK}" stroke-width="2.5"/><path d="M107 94 L123 82 L139 94" fill="none" stroke="${INK}" stroke-width="2.5"/></g>
+  <path d="M160 92 V50" stroke="${INK}" stroke-width="3"/><path d="M160 50 l26 8 -26 8 Z" fill="${GOLD}" stroke="${INK}" stroke-width="2"/>
+  <circle cx="40" cy="30" r="12" fill="${GOLD}"/>
+  <path d="M180 60 q6 -16 0 -26 M186 62 q10 -12 8 -26" stroke="${GREEN}" stroke-width="3" fill="none"/>
+</svg>`
+};
+
+/* ═══════════ BLOCOS DE TEXTO ═══════════ */
+const P = t => `<p class="text-ink-700 leading-relaxed mt-3">${t}</p>`;
+const H3 = t => `<h3 class="font-display text-xl font-bold text-coffee-600 mt-7 mb-1">${t}</h3>`;
+const FIG = (svg,cap) => `<figure class="bg-white rounded-2xl p-4 shadow-card border border-parch-200 my-5">${svg}<figcaption class="text-center text-xs text-ink-700 font-semibold mt-2">${cap}</figcaption></figure>`;
+const CURIOS = t => `<div class="mt-5 bg-gold-500/10 border-l-4 border-gold-500 rounded-r-xl px-4 py-3 text-sm text-ink-800"><b>💡 Você sabia?</b> ${t}</div>`;
+const VOC = a => `<div class="mt-5 flex flex-wrap gap-2">${a.map(v=>`<span class="bg-imp-100 text-imp-800 text-xs font-extrabold rounded-full px-3 py-1.5 border border-imp-200">${v}</span>`).join('')}</div>`;
+const GRID = it => `<div class="grid sm:grid-cols-2 gap-3 mt-4">${it.map(i=>`<div class="bg-white rounded-xl p-4 shadow-card border border-parch-200"><div class="text-2xl">${i[0]}</div><div class="font-extrabold text-imp-800 mt-1">${i[1]}</div><div class="text-sm text-ink-700">${i[2]}</div></div>`).join('')}</div>`;
+const TL = it => `<div class="overflow-x-auto mt-5"><div class="flex gap-3 min-w-max pb-2">${it.map(t=>`<div class="w-44 bg-white rounded-xl p-4 shadow-card border-t-4 border-gold-500"><div class="text-2xl">${t[0]}</div><div class="font-extrabold text-coffee-600 text-sm mt-1">${t[1]}</div><div class="text-sm text-ink-700">${t[2]}</div></div>`).join('')}</div></div>`;
+
+/* ═══════════ TÓPICOS ═══════════ */
+const TOPICS = [
+{ id:'panorama', nome:'Panorama 1840–1889', emoji:'👑', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">Panorama: o Brasil do Segundo Reinado</h2>
+  ${P('O <b>Segundo Reinado</b> (1840–1889) é o período em que <b>dom Pedro II</b> governou o Brasil. Começou com um "jeitinho" político — o <b>Golpe da Maioridade</b> — e terminou com um golpe militar que proclamou a <b>República</b>. Entre uma ponta e outra: o café virou o principal produto de exportação, a escravidão foi lentamente destruída por leis e lutas, e o país travou a maior guerra de sua história.')}
+  ${FIG(SVG.mapaBrasil,'O Império do Brasil e seus palcos: a Corte no Rio, a Praieira em Pernambuco, o café no Sudeste e a guerra no Sul.')}
+  ${P('Politicamente, o império funcionava com dois grandes partidos — <b>Liberal</b> e <b>Conservador</b> — que se alternavam no governo sob o olhar do imperador, dono do <b>Poder Moderador</b>. Economicamente, tudo girava em torno do <b>café</b> e, até 1888, do <b>trabalho escravizado</b>.')}
+  ${TL([['👑','1840','Golpe da Maioridade'],['🗳️','1847','Parlamentarismo ("ao contrário")'],['☕','1850s','Café domina as exportações'],['⛓️','1850','Lei Eusébio de Queirós: fim do tráfico'],['⚔️','1864–70','Guerra do Paraguai'],['🚂','1854+','Ferrovias do café'],['🍼','1871','Lei do Ventre Livre'],['👴','1885','Lei dos Sexagenários'],['📜','1888','Lei Áurea'],['🇧🇷','1889','Proclamação da República']])}
+  ${CURIOS('Pedro II reinou por <b>49 anos</b> — um dos reinados mais longos das Américas.')}
+  ${VOC(['Segundo Reinado','Poder Moderador','Partido Liberal','Partido Conservador','Café'])}
+`},
+{ id:'golpe', nome:'Golpe da Maioridade', emoji:'🎭', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">O Golpe da Maioridade (1840)</h2>
+  ${P('Com a abdicação de Pedro I (1831), o Brasil viveu o <b>Período Regencial</b>: governado por regentes, enquanto o herdeiro, <b>Pedro de Alcântara</b>, era criança. Foi uma década agitada, com revoltas provinciais como a <b>Cabanagem</b>, a <b>Sabinada</b>, a <b>Balaiada</b> e a <b>Farroupilha</b>.')}
+  ${P('Para acalmar o país, políticos liberais tiveram uma ideia ousada: declarar o jovem Pedro <b>maior de idade antes da hora</b>. A Constituição exigia 18 anos; ele tinha <b>14</b>. Em <b>23 de julho de 1840</b>, entre manobras e pressões no Parlamento, a maioridade foi declarada — por isso o episódio é chamado de <b>golpe</b>.')}
+  ${FIG(SVG.coroa,'A coroa imperial: aos 14 anos, Pedro II assumia um império do tamanho de um continente.')}
+  ${P('A aposta funcionou no curto prazo: a figura do imperador trouxe unidade e encerrou revoltas regenciais. Mas criou um trono dependente das elites que o colocaram lá.')}
+  ${CURIOS('Perguntado se aceitava o trono, o menino de 14 anos respondeu com um simples e firme <b>"sim"</b>.')}
+  ${VOC(['Regência','Maioridade','1840','Elites liberais','Farroupilha'])}
+`},
+{ id:'inicio', nome:'Início do reinado', emoji:'🏛️', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">O início do Segundo Reinado</h2>
+  ${P('Coroado com pompa em <b>2 de dezembro de 1841</b>, Pedro II construiu um regime de equilíbrio: em 1847 criou o <b>Conselho de Ministros</b>, instalando um <b>parlamentarismo</b> parecido com o britânico — mas com um detalhe brasileiro.')}
+  ${P('Aqui, o imperador usava o <b>Poder Moderador</b> para dissolver a Câmara e convocar novas eleições quando quisesse — e as eleições, controladas pelo governo, davam vitória ao partido do imperador. Por isso os críticos chamavam o sistema de <b>"parlamentarismo às avessas"</b> (ou "ao contrário"): em vez de o Parlamento escolher o governante, o governante "escolhia" o Parlamento.')}
+  ${GRID([['🟢','Partido Liberal','Defendia mais autonomia para as províncias e reformas.'],['🔵','Partido Conservador','Defendia ordem, centralização e os grandes proprietários.'],['⚖️','Poder Moderador','Exclusivo do imperador: dissolvia câmaras, nomeava senadores e juízes.'],['🗞️','Imprensa ativa','Jornais opinavam, atacavam e mobilizavam a opinião pública.']])}
+  ${P('O resultado foi uma estabilidade rara na América Latina — estabilidade que convivia com a escravidão e com a concentração de terras nas mãos de poucas famílias.')}
+  ${CURIOS('As eleições do império eram tão controladas que a oposição chamava algumas de <b>"eleições do cacete"</b>, pela violência dos capangas.')}
+  ${VOC(['Parlamentarismo','Poder Moderador','Conselho de Ministros','Bipartidarismo'])}
+`},
+{ id:'praieira', nome:'Revolução Praieira', emoji:'📰', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">Revolução Praieira (1848–1850)</h2>
+  ${P('Em <b>Pernambuco</b>, a insatisfação contra o domínio político de poucas famílias e contra o monopólio do comércio por portugueses explodiu em revolta armada: a <b>Revolução Praieira</b>, a última grande revolta liberal do período. O nome vem da <b>Rua da Praia</b>, no Recife, onde ficava o jornal do grupo.')}
+  ${P('Os praieiros defendiam ideias avançadas para a época: <b>voto livre e universal</b>, <b>liberdade de imprensa</b>, fim do monopólio comercial e distribuição de terras. Chegaram a tomar cidades do interior, mas foram derrotados pelas tropas imperiais em 1849; a resistência final cessou em 1850.')}
+  ${FIG(SVG.mapaBrasil,'Pernambuco, no Nordeste, foi o palco da última revolta liberal do império.')}
+  ${P('Com a derrota praieira, o império entrou em sua fase mais estável — e as elites cafeeiras ganharam ainda mais espaço no governo.')}
+  ${CURIOS('O jornalista e poeta praieiro <b>Borges da Fonseca</b> publicou o "Manifesto ao Mundo" com as reivindicações do movimento.')}
+  ${VOC(['Praieiros','Rua da Praia','Recife','Liberalismo','1848'])}
+`},
+{ id:'cafe', nome:'Expansão cafeeira', emoji:'☕', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">A expansão cafeeira: o ouro verde</h2>
+  ${P('Trazido ao Brasil no século XVIII, o café encontrou seu reino no <b>Vale do Paraíba</b>, entre o Rio de Janeiro e São Paulo, a partir dos anos 1830. Em poucas décadas, o Brasil virou o <b>maior produtor mundial</b>, e o café passou a representar mais da metade de tudo que o país exportava.')}
+  ${FIG(SVG.mapaCafe,'A marcha do café: do Vale do Paraíba para a Zona da Mata mineira, o Oeste Paulista e o norte do Paraná.')}
+  ${P('O solo do Vale, cansado depois de décadas de cultivo, empurrou a fronteira cafeeira para o <b>Oeste Paulista</b>, de <b>terra roxa</b> fértil. Lá, as fazendas nasceram maiores, com <b>ferrovias</b> (como a Santos-Jundiaí) levando o grão aos portos — e, cada vez mais, com <b>trabalho imigrante</b> no lugar do escravizado.')}
+  ${P('Os donos dessas fazendas, os <b>"barões do café"</b>, financiavam bancos, ferrovias e políticos: o poder econômico virava poder político.')}
+  ${CURIOS('A expressão "plantar o dinheiro" faz sentido literal: no império, derrubava-se mata para plantar café — e lucro.')}
+  ${VOC(['Vale do Paraíba','Oeste Paulista','Terra roxa','Barões do café','Exportação'])}
+`},
+{ id:'escravizados', nome:'Trabalho escravizado', emoji:'⛓️', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">O trabalho escravizado nos cafezais</h2>
+  ${P('Até meados do século XIX, a base do trabalho nos cafezais era <b>escravizada</b>: pessoas compradas como mercadoria, que trabalhavam de <b>sol a sol</b> — até 14 ou 16 horas por dia na colheita — sob a vigilância do <b>feitor</b>, que aplicava castigos físicos.')}
+  ${FIG(SVG.cafezal,'A jornada no cafezal: fileiras de pés de café, cestos e o trabalho pesado de mãos escravizadas.')}
+  ${P('A vida era curta e dura: moradia na <b>senzala</b>, alimentação insuficiente, punições e famílias separadas pela venda. Nas cidades, havia os <b>"ganhadores"</b>, escravizados que trabalhavam alugados e repassavam parte do ganho ao senhor.')}
+  ${P('Mas a história não é só de sofrimento: é também de <b>resistência</b> — trabalhar devagar, quebrar ferramentas, manter religiões e saberes, fugir, formar <b>quilombos</b> e lutar pela liberdade nos tribunais e nas ruas.')}
+  ${CURIOS('Registros de fazendas mostram que a vida média de uma pessoa escravizada no café mal passava dos <b>40 anos</b>.')}
+  ${VOC(['Senzala','Feitor','Ganhadores','Resistência','Castigos'])}
+`},
+{ id:'trafico', nome:'Fim do tráfico', emoji:'🚢', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">O fim do tráfico de escravizados (1850)</h2>
+  ${P('A Inglaterra, interessada em ampliar mercados consumidores e em nome de um discurso abolicionista, pressionava o Brasil: em 1845 aprovou o <b>Bill Aberdeen</b>, que permitia à marinha britânica apreender navios negreiros brasileiros até em águas do Brasil.')}
+  ${P('Em <b>1850</b>, o governo imperial finalmente fez valer a <b>Lei Eusébio de Queirós</b>, que <b>proibia o tráfico atlântico</b> de escravizados. O comércio ilegal ainda tentou resistir, mas a fiscalização e os acordos com a Inglaterra sufocaram a rota africana.')}
+  ${FIG(SVG.navio,'Navios a vapor: os mesmos mares que traziam imigrantes haviam trazido, por séculos, os navios negreiros.')}
+  ${P('Consequências: o preço dos escravizados disparou, cresceu o <b>tráfico interno</b> (do Nordeste para o Sudeste cafeeiro) e os fazendeiros passaram a buscar outra mão de obra: os <b>imigrantes europeus</b>. Começava também a era das <b>leis graduais</b>: <b>Ventre Livre (1871)</b> e <b>Sexagenários (1885)</b>.')}
+  ${CURIOS('Mesmo proibido, o tráfico ilegal continuou por alguns anos: navios negreiros desembarcavam em praias desertas, de madrugada.')}
+  ${VOC(['Bill Aberdeen','Lei Eusébio de Queirós','1850','Tráfico interno','Leis graduais'])}
+`},
+{ id:'quilombos', nome:'Quilombos', emoji:'🌴', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">Os quilombos: territórios de liberdade</h2>
+  ${P('<b>Quilombo</b> era toda comunidade formada por pessoas que escapavam da escravidão (os <b>quilombolas</b>). Herdeiros do famoso <b>Quilombo dos Palmares</b> (século XVII), eles existiram <b>em todas as províncias</b> do império — muitos bem perto das cidades e fazendas.')}
+  ${FIG(SVG.mapaQuilombos,'Havia quilombos espalhados por todo o império; no litoral paulista, destacou-se o do Jabaquara.')}
+  ${P('Nos quilombos se plantava, caçava, comerciava com vilas vizinhas e se recriavam culturas africanas. No Segundo Reinado, com a expansão do café, eles <b>aumentaram</b> — e também as expedições de repressão dos "capitães do mato". No litoral de São Paulo, o <b>Quilombo do Jabaquara</b> chegou a abrigar milhares de refugiados nos anos 1880, liderado por <b>Quintino de Lacerda</b>.')}
+  ${P('Hoje, as comunidades <b>remanescentes de quilombo</b> têm direito reconhecido pela Constituição de 1988 às suas terras — memória viva dessa resistência.')}
+  ${CURIOS('Muitos quilombolas voltavam às fazendas para <b>libertar parentes</b> — a liberdade era um projeto coletivo.')}
+  ${VOC(['Quilombo','Quilombolas','Jabaquara','Capitão do mato','Resistência'])}
+`},
+{ id:'indigenas', nome:'Política indigenista', emoji:'🏹', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">A política indigenista do império</h2>
+  ${P('Para o Estado imperial, os povos indígenas eram vistos como obstáculo ao avanço das fazendas ou como mão de obra a "civilizar". Em <b>1845</b>, o governo <b>extinguiu os Diretórios dos Índios</b>: as aldeias missionárias perderam proteção oficial e os indígenas passaram a ser tratados como <b>"órfãos"</b> sob tutela do Estado — condição que duraria até o século XX.')}
+  ${FIG(SVG.oca,'Aldeias e saberes milenares: a política imperial buscou assimilar os povos originários.')}
+  ${P('Na prática, a tutela serviu pouco: terras indígenas foram <b>invadidas por fazendeiros</b> de café e criadores, aldeias foram atacadas por expedições militares e "bugreiros" (caçadores de indígenas) no Sul e no Leste, e doenças dizimaram comunidades inteiras. A catequese nos aldeamentos buscava transformar os povos originários em trabalhadores dóceis.')}
+  ${P('Apesar de tudo, os povos indígenas <b>resistiram</b>: fugas, guerras, negociações e a manutenção de línguas e rituais que atravessaram o império e chegaram até nós.')}
+  ${CURIOS('A ideia de indígena como "órfão do Estado" só caiu formalmente com o <b>Código Civil de 1916</b> e, depois, com a Constituição de 1988.')}
+  ${VOC(['Diretórios dos Índios','Tutela','Aldeamentos','Bugreiros','Resistência indígena'])}
+`},
+{ id:'guerra', nome:'Guerra do Paraguai', emoji:'⚔️', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">Guerra do Paraguai (1864–1870)</h2>
+  ${P('A região do rio da Prata vivia em tensão entre Brasil, Argentina, Uruguai e Paraguai. Em 1864, em meio à guerra civil uruguaia, o Paraguai de <b>Solano López</b> aprisionou um navio brasileiro e invadiu o <b>Mato Grosso</b>. Brasil, <b>Argentina</b> e <b>Uruguai</b> assinaram então a <b>Tríplice Aliança</b> contra o Paraguai.')}
+  ${FIG(SVG.mapaGuerra,'O teatro da guerra: a rota aliada subiu do Prata até Humaitá e Assunção.')}
+  ${P('Foram seis anos de combates sangrentos: as batalhas de <b>Tuiuti</b> (1866, a maior da América do Sul), o cerco à fortaleza de <b>Humaitá</b> (1868) e a ocupação de <b>Assunção</b> (1869). O Paraguai foi devastado; o Brasil perdeu dezenas de milhares de vidas e gastou fortunas.')}
+  ${P('Consequências no Brasil: o <b>Exército</b> saiu fortalecido e politizado (e depois abraçaria a República), e muitos voltaram da guerra defendendo o <b>fim da escravidão</b> — afinal, escravizados haviam lutado prometendo liberdade.')}
+  ${CURIOS('Muitos recrutados eram pobres livres e escravizados enviados no lugar dos filhos de fazendeiros — a guerra também era desigual.')}
+  ${VOC(['Tríplice Aliança','Solano López','Tuiuti','Humaitá','1864–1870'])}
+`},
+{ id:'imigracao', nome:'Imigração europeia', emoji:'🧳', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">A imigração de europeus: "braços para a lavoura"</h2>
+  ${P('Com o fim do tráfico (1850) e a pressão abolicionista, os cafezais precisavam de outra mão de obra: era a busca pelos <b>"braços livres"</b>. As primeiras experiências, como o <b>sistema de parceria</b> do senador Vergueiro (famílias dividiam o lucro do café), fracassaram: endividadas e maltratadas, as colônias se rebelaram, como em <b>Ibicaba (1856)</b>.')}
+  ${FIG(SVG.mapaImigracao,'Do Mediterrâneo e do Atlântico Norte para Santos e Rio: a rota dos imigrantes.')}
+  ${P('A partir dos anos 1870, o governo passou a pagar a viagem (<b>imigração subsidiada</b>): vieram sobretudo <b>italianos</b>, além de portugueses, espanhóis e alemães. Em São Paulo, a <b>Hospedaria dos Imigrantes</b> (1887) recebia as famílias antes do envio às fazendas. Muitos fugiram das fazendas para as cidades, ajudando a nascer a <b>indústria</b> brasileira.')}
+  ${CURIOS('A propaganda europeia prometia "terras e riqueza"; a realidade nas fazendas muitas vezes era dívida e vigilância — por isso a Itália chegou a proibir a imigração subsidiada para o Brasil (Decreto Prinetti, 1902).')}
+  ${VOC(['Sistema de parceria','Ibicaba','Imigração subsidiada','Hospedaria','Italianos'])}
+`},
+{ id:'fazenda', nome:'A fazenda de café', emoji:'🏡', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">Por dentro da fazenda de café</h2>
+  ${FIG(SVG.fazenda,'Diagrama da fazenda: 1 casa-sede · 2 senzala/colônias · 3 cafezal · 4 terreiro · 5 máquinas e tulha · 6 trem para o porto.')}
+  ${H3('O processo, passo a passo')}
+  <ol class="list-decimal ml-6 mt-2 space-y-1 text-ink-700 text-sm">
+    <li><b>Derrubada e queima</b> da mata para abrir o cafezal.</li>
+    <li><b>Plantio e roça</b>: mudas em fileiras, capina e cuidados por anos.</li>
+    <li><b>Colheita</b> (maio–setembro): o fruto é arrancado ramo a ramo, em mutirão.</li>
+    <li><b>Secagem</b> no <b>terreiro</b> (ou nas "araras"), revolvida com rodos por dias.</li>
+    <li><b>Beneficiamento</b>: máquinas <b>descascadoras</b> e <b>ventiladoras</b> separam casca e grão.</li>
+    <li><b>Ensacamento</b> (sacas de 60 kg) e <b>transporte</b>: tropas de mula → trem → porto.</li>
+  </ol>
+  ${H3('Funções na fazenda')}
+  ${GRID([['🎩','Senhor / barão do café','Dono da terra e das pessoas; decidia tudo e financiava a política.'],['🪢','Feitor','Fiscalizava o trabalho e aplicava castigos aos escravizados.'],['⛓️','Escravizados da lavoura e da casa','Do plantio à colheita; na casa-sede, cozinhavam e cuidavam das crianças.'],['🧳','Colono imigrante','Família assalariada ou "parceira"; cultivava também roça própria.'],['⚙️','Mecânico / engenheiro','Cuidava das máquinas de beneficiar, da roda d’água e da ferrovia.'],['🐴','Troeiro / comissário','Levava as sacas e negociava o café com as casas exportadoras.']])}
+  ${H3('Máquinas e estruturas')}
+  ${P('A <b>roda d’água</b> movia os <b>pilões</b> e as <b>descascadoras</b>; o <b>ventilador</b> separava grãos leves; a <b>tulha</b> guardava o café beneficiado; e o <b>terrero/terreiro</b> de terra batida secava o grão ao sol. Nas fazendas do Oeste, a <b>ferrovia</b> substituiu o lombo da mula.')}
+  ${FIG(SVG.trem,'As "estradas de ferro do café": sacas de 60 kg descendo a serra até Santos.')}
+  ${CURIOS('A saca de 60 kg virou medida universal do café até hoje — herança direta das fazendas do império.')}
+  ${VOC(['Terreiro','Tulha','Descascadora','Ventilador','Saca de 60 kg','Feitor'])}
+`},
+{ id:'abolicao', nome:'Abolição e República', emoji:'📜', html:`
+  <h2 class="font-display text-3xl font-black text-imp-900">Abolição da escravidão e fim da monarquia</h2>
+  ${P('Depois de 1870, o <b>abolicionismo</b> virou movimento de massa: jornais e discursos de <b>José do Patrocínio</b>, processos judiciais de <b>Luís Gama</b> (ex-escravizado que virou advogado), caixas libertadoras, fugas organizadas e quilombos urbanos. As leis vieram devagar: <b>Ventre Livre (1871)</b> e <b>Sexagenários (1885)</b> — até que, em <b>13 de maio de 1888</b>, a princesa <b>Isabel</b> assinou a <b>Lei Áurea</b>, abolindo a escravidão sem indenizar os senhores — e sem dar terra, escola ou salário aos libertos.')}
+  ${FIG(SVG.leiAurea,'A Lei Áurea: duas linhas que encerraram séculos de escravidão — mas não garantiram cidadania aos libertos.')}
+  ${P('O Brasil foi o <b>último país das Américas</b> a abolir a escravidão. Sem reformas, milhões de libertos ficaram à margem; muitos seguiram para as cidades e periferias. A monarquia, já desgastada com o Exército, a Igreja e os cafezais paulistas (agora republicanos), caiu em <b>15 de novembro de 1889</b>, com o golpe militar de <b>Deodoro da Fonseca</b>.')}
+  ${FIG(SVG.republica,'Do pavilhão imperial à bandeira republicana: o 15 de Novembro de 1889.')}
+  ${P('A família imperial partiu para o exílio na madrugada seguinte. Nascia a República — ainda sem participação popular, mas com uma pauta nova: federação, separação Igreja-Estado e, adiada, a cidadania plena dos afro-brasileiros.')}
+  ${CURIOS('Pedro II estava em Petrópolis quando a República foi proclamada; soube por carta e partiu para a Europa, onde morreu em 1891.')}
+  ${VOC(['Lei Áurea','13 de Maio','Abolicionismo','Luís Gama','15 de Novembro','República'])}
+`}
+];
+
+/* ═══════════ QUIZ ═══════════ */
+const QUESTIONS = [
+ {tag:'Panorama', q:'Quem governou o Brasil durante o Segundo Reinado (1840–1889)?', o:['Dom Pedro II','Dom Pedro I','Princesa Isabel','Deodoro da Fonseca'], a:0, e:'Pedro II assumiu em 1840, aos 14 anos, e reinou até 1889.'},
+ {tag:'Panorama', q:'Quanto tempo durou o Segundo Reinado?', o:['49 anos (1840–1889)','30 anos (1859–1889)','65 anos (1824–1889)','15 anos (1874–1889)'], a:0, e:'De julho de 1840 a 15 de novembro de 1889: quase meio século.'},
+ {tag:'Golpe da Maioridade', q:'O que foi o Golpe da Maioridade (1840)?', o:['A declaração de que Pedro II, com 14 anos, já era maior de idade para governar','A coroação de Pedro I','Um golpe militar republicano','A abdicação de Pedro II'], a:0, e:'A Constituição exigia 18 anos; os liberais anteciparam a maioridade para acabar com as regências.'},
+ {tag:'Início do reinado', q:'O "parlamentarismo às avessas" do império significava que:', o:['O imperador dissolvia a Câmara e o governo "fazia" a eleição do novo Parlamento','O povo escolhia o primeiro-ministro diretamente','O Parlamento escolhia o imperador','Não existiam partidos políticos'], a:0, e:'Ao contrário do modelo britânico, aqui o trono controlava a formação do Parlamento.'},
+ {tag:'Praieira', q:'A Revolução Praieira (1848) aconteceu em qual província?', o:['Pernambuco','São Paulo','Rio Grande do Sul','Bahia'], a:0, e:'Em Pernambuco; o nome vem da Rua da Praia, no Recife.'},
+ {tag:'Expansão cafeeira', q:'Qual foi a primeira grande região produtora de café no Segundo Reinado?', o:['Vale do Paraíba (RJ–SP)','Oeste do Paraná','Sertão nordestino','Amazônia'], a:0, e:'Do Vale do Paraíba o café marchou para o Oeste Paulista e a Zona da Mata mineira.'},
+ {tag:'Trabalho escravizado', q:'Nas fazendas de café, quem fiscalizava o trabalho e aplicava os castigos?', o:['O feitor','O comissário de café','O padre da aldeia','O engenheiro de máquinas'], a:0, e:'O feitor era o braço da violência senhorial no cafezal.'},
+ {tag:'Fim do tráfico', q:'Qual lei extinguiu o tráfico atlântico de escravizados em 1850?', o:['Lei Eusébio de Queirós','Lei Áurea','Lei do Ventre Livre','Bill Aberdeen'], a:0, e:'O Bill Aberdeen (1845) era a pressão inglesa; a lei brasileira de 1850 foi a Eusébio de Queirós.'},
+ {tag:'Quilombos', q:'Os quilombos eram:', o:['Comunidades formadas por pessoas que escapavam da escravidão','Depósitos de café dos barões','Aldeias de catequese indígena','Quartéis do Exército imperial'], a:0, e:'Territórios de resistência e liberdade, existentes em todas as províncias.'},
+ {tag:'Política indigenista', q:'Em 1845, o governo imperial extinguiu os Diretórios dos Índios e passou a tratar os indígenas como:', o:['"Órfãos" sob tutela do Estado','Cidadãos com direito a voto','Proprietários das fazendas de café','Soldados do Exército'], a:0, e:'A "tutela" deixou as terras indígenas desprotegidas diante do avanço das fazendas.'},
+ {tag:'Guerra do Paraguai', q:'Quais países formaram a Tríplice Aliança contra o Paraguai?', o:['Brasil, Argentina e Uruguai','Brasil, Chile e Bolívia','Argentina, Peru e Chile','Estados Unidos, Brasil e Uruguai'], a:0, e:'O tratado de 1865 uniu os três vizinhos contra o Paraguai de Solano López.'},
+ {tag:'Guerra do Paraguai', q:'Uma consequência da Guerra do Paraguai no Brasil foi:', o:['O fortalecimento político do Exército e o avanço das ideias abolicionistas','A queda imediata da monarquia em 1870','A anexação do Paraguai ao Brasil','O fim do café como produto de exportação'], a:0, e:'O Exército voltou politizado; a República viria em 1889 com sua participação.'},
+ {tag:'Imigração', q:'Por que o Brasil passou a incentivar a imigração europeia?', o:['Para substituir a mão de obra escravizada nos cafezais','Para povoar a Amazônia','Para criar um exército de mercenários','Para ensinar idiomas nas cidades'], a:0, e:'Com o fim do tráfico, os fazendeiros buscavam "braços livres" para a lavoura.'},
+ {tag:'Imigração', q:'No "sistema de parceria" (famílias imigrantes dividiam o lucro do café), o que aconteceu em colônias como Ibicaba (1856)?', o:['Rebeliões dos colonos, endividados e maltratados','Lucros recordes para todos','A compra das fazendas pelos colonos','A vinda de navios japoneses'], a:0, e:'As dívidas com o armazém da fazenda levaram os colonos à revolta.'},
+ {tag:'Fazenda de café', q:'Para que servia o terreiro na fazenda de café?', o:['Secar os grãos de café ao sol','Guardar as sacas beneficiadas','Moer o café torrado','Hospedar os imigrantes'], a:0, e:'Depois da colheita, o café era espalhado no terreiro e revolvido com rodos.'},
+ {tag:'Fazenda de café', q:'No beneficiamento, quais máquinas separavam a casca e limpavam o grão?', o:['Descascadora e ventilador','Tear e roda d’água','Prensa e balança','Arado e enxada'], a:0, e:'Movidas pela roda d’água, descascavam e ventilavam o café antes da tulha.'},
+ {tag:'Fazenda de café', q:'Qual era a ordem correta do processo do café?', o:['Colheita → secagem → beneficiamento → ensacamento','Plantio → beneficiamento → colheita → secagem','Secagem → colheita → ensacamento → plantio','Ensacamento → colheita → secagem → beneficiamento'], a:0, e:'Colhe-se, seca-se no terreiro, beneficia-se nas máquinas e ensaca-se (60 kg).'},
+ {tag:'Abolição', q:'Quem assinou a Lei Áurea, em 13 de maio de 1888?', o:['Princesa Isabel','Dom Pedro II','José do Patrocínio','Luís Gama'], a:0, e:'Regente em nome do pai, Isabel assinou a lei de dois artigos que aboliu a escravidão.'},
+ {tag:'Abolição', q:'Qual ex-escravizado virou advogado e libertou centenas de pessoas pelos tribunais?', o:['Luís Gama','André Rebouças','Machado de Assis','Castro Alves'], a:0, e:'Luís Gama usava a lei contra a própria escravidão — e vencia.'},
+ {tag:'Fim da monarquia', q:'Quem proclamou a República em 15 de novembro de 1889?', o:['Marechal Deodoro da Fonseca','Marechal Floriano Peixoto','Benjamin Constant','Rui Barbosa'], a:0, e:'Deodoro liderou o golpe militar que depôs Pedro II e instaurou a República.']}
+];
+
+/* ═══════════ CONFETES ═══════════ */
+const cvs=$('#confetti'), ctx=cvs.getContext('2d'); let pieces=[], confRunning=false;
+function fitCanvas(){cvs.width=innerWidth;cvs.height=innerHeight} addEventListener('resize',fitCanvas); fitCanvas();
+const CCOLORS=['#1b583e','#d4af37','#6f4e37','#f6efdf','#1e4fa3','#8c1d2c','#ecd28a'];
+function spawn(n,mode){ for(let i=0;i<n;i++){ pieces.push({
+  x: mode==='rain'? Math.random()*cvs.width : cvs.width/2+(Math.random()-.5)*160,
+  y: mode==='rain'? -30-Math.random()*cvs.height*.6 : cvs.height*.4,
+  vx:(Math.random()-.5)*(mode==='rain'?2.4:11), vy: mode==='rain'? 2+Math.random()*3 : -(5+Math.random()*8),
+  g:.12+Math.random()*.08, w:6+Math.random()*8, h:8+Math.random()*10, r:Math.random()*Math.PI, vr:(Math.random()-.5)*.32,
+  c:CCOLORS[(Math.random()*CCOLORS.length)|0], sh:Math.random()<.25?'c':'r', life:0 }); }
+  if(!confRunning){confRunning=true;requestAnimationFrame(tick);} }
+function tick(){ ctx.clearRect(0,0,cvs.width,cvs.height);
+  pieces=pieces.filter(p=>p.y<cvs.height+50&&p.life<700);
+  pieces.forEach(p=>{p.life++;p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.r+=p.vr;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;
+    if(p.sh==='c'){ctx.beginPath();ctx.arc(0,0,p.w/2,0,7);ctx.fill();}else ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    ctx.restore();});
+  if(pieces.length) requestAnimationFrame(tick); else {confRunning=false;ctx.clearRect(0,0,cvs.width,cvs.height);} }
+const chuvaDeConfetes=()=>{spawn(150,'rain');setTimeout(()=>spawn(90,'rain'),700);setTimeout(()=>spawn(60,'rain'),1500);};
+const burstConfetes=()=>spawn(110,'burst');
+
+/* ═══════════ LOGIN / MURAL ═══════════ */
+function renderMural(){
+  const vis=LS.get('reinado_visitors_v1',[]);
+  $('#muralCount').textContent = vis.length? `· ${vis.length} registro(s) de entrada`:'';
+  $('#nomesHint').innerHTML=[...new Set(vis.map(v=>v.n))].map(n=>`<option value="${n}">`).join('');
+  $('#muralList').innerHTML = vis.length? vis.slice().reverse().map(v=>{
+    const at=CURRENT&&v.n===CURRENT.n&&v.t===CURRENT.t;
+    return `<div class="bg-white rounded-2xl p-4 shadow-card border ${at?'border-gold-500 ring-2 ring-gold-400':'border-parch-200'} reveal on">
+      <div class="flex items-center gap-3"><div class="text-3xl">${at?'🏅':''}</div>
+      <div><div class="font-display font-bold text-imp-900">${v.n}</div>
+      <div class="text-xs font-bold text-coffee-600">${v.t}${at?' · você está aqui!':''}</div>
+      <div class="text-[11px] text-ink-700">${new Date(v.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div></div></div>`;
+  }).join('') : `<p class="text-ink-700 sm:col-span-2 lg:col-span-3 text-center bg-white rounded-2xl p-8 shadow-card">Nenhum visitante ainda... seja o primeiro a entrar no paço! 👑</p>`;
+}
+function entrar(){ $('#loginOverlay').classList.add('hidden'); $('#chipUser').classList.remove('hidden');
+  $('#chipUser').innerHTML=`☕ ${CURRENT.n} · ${CURRENT.t}`; renderMural(); renderQuiz(); resetRPG(); burstConfetes(); }
+$('#loginForm').addEventListener('submit',ev=>{ ev.preventDefault();
+  const n=$('#inpNome').value.trim(), t=$('#inpTurma').value.trim(); if(!n||!t)return;
+  CURRENT={n,t}; LS.set('reinado_current_v1',CURRENT);
+  const vis=LS.get('reinado_visitors_v1',[]); vis.push({n,t,ts:Date.now()}); LS.set('reinado_visitors_v1',vis); entrar(); });
+$('#btnTrocar').addEventListener('click',()=>{ CURRENT=null; LS.del('reinado_current_v1');
+  $('#loginOverlay').classList.remove('hidden'); $('#inpNome').value=''; $('#inpTurma').value=''; });
+
+/* ═══════════ TÓPICOS ═══════════ */
+function renderChips(){ $('#topicChips').innerHTML=TOPICS.map((t,i)=>
+  `<button data-i="${i}" class="topic-chip shrink-0 rounded-full border-2 border-imp-200 bg-white px-4 py-2 text-sm font-extrabold text-imp-800 hover:border-gold-500 transition">${t.emoji} ${t.nome}</button>`).join('');
+  $('#topicChips').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>showTopic(+b.dataset.i))); }
+function showTopic(i){ $('#topicChips').querySelectorAll('.topic-chip').forEach((b,j)=>b.classList.toggle('active',j===i));
+  const t=TOPICS[i];
+  $('#topicBody').innerHTML=`<article class="bg-white rounded-3xl p-6 sm:p-9 shadow-lift border border-parch-200 pop">
+    <div class="imp-border mb-6 rounded"></div>${t.html}
+    <div class="flex justify-between mt-8 pt-5 border-t border-parch-200">
+      <button id="tPrev" class="rounded-xl bg-imp-100 hover:bg-imp-200 text-imp-800 font-extrabold px-4 py-2 text-sm ${i===0?'invisible':''}">← Anterior</button>
+      <span class="text-xs font-bold text-ink-700 self-center">Tópico ${i+1} de ${TOPICS.length}</span>
+      <button id="tNext" class="rounded-xl bg-imp-700 hover:bg-imp-800 text-white font-extrabold px-4 py-2 text-sm ${i===TOPICS.length-1?'invisible':''}">Próximo →</button>
+    </div></article>`;
+  $('#tPrev').onclick=()=>showTopic(i-1); $('#tNext').onclick=()=>showTopic(i+1);
+  $('#topicBody').scrollIntoView({behavior:'smooth',block:'start'}); }
+
+/* ═══════════ QUIZ ═══════════ */
+let QZ=null;
+function loadQuiz(){ QZ=CURRENT? LS.get(quizKey(),null):null; if(!QZ) QZ={answers:[],done:false,celebrated:false}; }
+function saveQuiz(){ if(CURRENT) LS.set(quizKey(),QZ); }
+const score=()=>QZ.answers.filter(a=>a.ok).length;
+function renderQuiz(){ loadQuiz(); const box=$('#quizBox');
+  if(QZ.done) return showResults();
+  const i=QZ.answers.length;
+  if(i>=QUESTIONS.length){ QZ.done=true; saveQuiz(); return showResults(); }
+  const q=QUESTIONS[i];
+  box.innerHTML=`<div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lift border border-parch-200 pop">
+    <div class="flex items-center justify-between text-sm font-extrabold text-imp-800">
+      <span>Questão ${i+1} de ${QUESTIONS.length}</span><span>Acertos: ${score()} 🏆</span></div>
+    <div class="h-3 bg-parch-200 rounded-full mt-3 overflow-hidden"><div class="h-full bg-gold-500 rounded-full transition-all duration-500" style="width:${(i/QUESTIONS.length)*100}%"></div></div>
+    <span class="inline-block mt-4 bg-coffee-500/10 text-coffee-600 border border-coffee-400/40 rounded-full px-3 py-1 text-xs font-extrabold">${q.tag}</span>
+    <h3 class="font-display text-xl sm:text-2xl font-bold text-imp-900 mt-3 leading-snug">${q.q}</h3>
+    <div id="opts" class="grid gap-3 mt-6">
+      ${q.o.map((o,j)=>`<button data-i="${j}" class="opt text-left rounded-xl border-2 border-imp-200 bg-parch-50 px-4 py-3 font-bold text-ink-800 flex gap-3 items-start">
+        <span class="shrink-0 w-8 h-8 rounded-full bg-imp-700 text-white grid place-items-center font-display font-black">${'ABCD'[j]}</span><span>${o}</span></button>`).join('')}
+    </div>
+    <div id="fb" class="hidden mt-5 rounded-xl px-4 py-3 text-sm font-bold"></div>
+    <div class="flex justify-end mt-6"><button id="btnNext" class="hidden rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-extrabold px-6 py-3 shadow-card">${i===QUESTIONS.length-1?'Ver resultado 🏁':'Próxima questão →'}</button></div>
+  </div>`;
+  box.querySelectorAll('#opts .opt').forEach(b=>b.addEventListener('click',()=>answer(+b.dataset.i)));
+  $('#btnNext').addEventListener('click',()=>{ QZ.answers.length>=QUESTIONS.length?(QZ.done=true,saveQuiz(),showResults()):renderQuiz(); }); }
+function answer(j){ const i=QZ.answers.length,q=QUESTIONS[i],ok=j===q.a;
+  QZ.answers.push({q:i,c:j,ok}); saveQuiz();
+  const btns=$('#quizBox').querySelectorAll('#opts .opt');
+  btns.forEach((b,k)=>{b.disabled=true; if(k===q.a)b.classList.add('correct'); if(k===j&&!ok)b.classList.add('wrong');});
+  const fb=$('#fb'); fb.classList.remove('hidden');
+  fb.className+= ok? ' bg-green-100 text-green-800 border border-green-300':' bg-red-100 text-red-800 border border-red-300';
+  fb.innerHTML=`${ok?'✅ Certo!':'❌ Não foi dessa vez.'} ${q.e}`;
+  $('#btnNext').classList.remove('hidden');
+  $('#quizBox').querySelector('.flex.items-center.justify-between span:last-child').textContent=`Acertos: ${score()} 🏆`; }
+function mencao(s){ if(s>=18)return['🥇','Comendador do Café']; if(s>=14)return['🥈','Barão(a) do Império']; if(s>=10)return['🥉','Conselheiro(a) da Corte']; return['🌱','Aprendiz de Escriba — estude e tente de novo!']; }
+function showResults(){ const s=score(),[em,men]=mencao(s),pct=Math.round(s/QUESTIONS.length*100);
+  if(!QZ.celebrated){QZ.celebrated=true;saveQuiz();chuvaDeConfetes();}
+  $('#quizBox').innerHTML=`<div class="bg-white rounded-3xl p-8 sm:p-10 shadow-lift border border-parch-200 text-center pop">
+    <div class="text-6xl">${em}</div>
+    <h3 class="font-display text-3xl font-black text-imp-900 mt-3">Quiz concluído!</h3>
+    <div class="relative w-40 h-40 mx-auto mt-6">
+      <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#ecdfc4" stroke-width="12"/>
+        <circle cx="60" cy="60" r="52" fill="none" stroke="#d4af37" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(pct/100)*326.7} 326.7"/></svg>
+      <div class="absolute inset-0 grid place-items-center"><div class="font-display text-3xl font-black text-imp-900">${s}/${QUESTIONS.length}</div></div></div>
+    <p class="mt-4 font-extrabold text-coffee-600">Menção: ${men}</p>
+    <p class="text-sm text-ink-700 mt-1">${pct}% de acerto · progresso de <b>${CURRENT.n}</b> (${CURRENT.t})</p>
+    <div class="flex flex-wrap justify-center gap-3 mt-7">
+      <button id="btnCert" class="rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-extrabold px-6 py-3 shadow-card">📜 Gerar certificado em PDF</button>
+      <button id="btnRedo" class="rounded-xl bg-imp-700 hover:bg-imp-800 text-white font-extrabold px-6 py-3 shadow-card">🔄 Refazer o quiz</button>
+    </div></div>`;
+  $('#btnCert').addEventListener('click',certificado);
+  $('#btnRedo').addEventListener('click',()=>{QZ={answers:[],done:false,celebrated:false};saveQuiz();renderQuiz();}); }
+function certificado(){ const s=score(),pct=Math.round(s/QUESTIONS.length*100),[em,men]=mencao(s);
+  const data=new Date().toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+  if(window.jspdf){ const doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    doc.setFillColor(251,247,238); doc.rect(0,0,297,210,'F');
+    doc.setDrawColor(212,175,55); doc.setLineWidth(2); doc.rect(8,8,281,194);
+    doc.setLineWidth(.6); doc.rect(12,12,273,186);
+    doc.setDrawColor(27,88,62); doc.setLineWidth(.4);
+    [[14,14],[278,14],[14,190],[278,190]].forEach(c=>doc.rect(c[0]-2,c[1]-2,4,4));
+    doc.setTextColor(27,88,62); doc.setFont('times','bold'); doc.setFontSize(30);
+    doc.text('CERTIFICADO DE CONQUISTA',148.5,42,{align:'center'});
+    doc.setFontSize(13); doc.setTextColor(111,78,55);
+    doc.text('Quiz do Império · Segundo Reinado no Brasil · História',148.5,52,{align:'center'});
+    doc.setFontSize(12); doc.setTextColor(61,52,40); doc.setFont('times','italic');
+    doc.text('Certificamos que',148.5,72,{align:'center'});
+    doc.setFontSize(26); doc.setFont('times','bold'); doc.setTextColor(33,28,21);
+    doc.text(CURRENT.n,148.5,86,{align:'center'});
+    doc.setFontSize(12); doc.setFont('times','italic'); doc.setTextColor(61,52,40);
+    doc.text(`da turma ${CURRENT.t}`,148.5,95,{align:'center'});
+    doc.text(`concluiu o Quiz do Império com ${s} acertos em ${QUESTIONS.length} questões (${pct}%).`,148.5,105,{align:'center'});
+    doc.setFont('times','bold'); doc.setTextColor(143,116,32); doc.setFontSize(15);
+    doc.text(`${em}  Menção: ${men}`,148.5,118,{align:'center'});
+    doc.setFont('times','italic'); doc.setFontSize(11); doc.setTextColor(61,52,40);
+    doc.text(`Dado em sua sala de aula, aos ${data}.`,148.5,130,{align:'center'});
+    doc.setDrawColor(27,88,62); doc.setLineWidth(.5);
+    doc.line(60,168,115,168); doc.line(182,168,237,168);
+    doc.setFont('times','bold'); doc.setFontSize(11); doc.setTextColor(27,88,62);
+    doc.text('Ordem do Café',87.5,174,{align:'center'});
+    doc.text('Professor(a) de História',209.5,174,{align:'center'});
+    doc.setFontSize(9); doc.setTextColor(143,116,32);
+    doc.text('LIBERTAS QUAE SERA TAMEN',148.5,190,{align:'center'});
+    doc.save(`Certificado_SegundoReinado_${CURRENT.n.replace(/\s+/g,'_')}.pdf`);
+    burstConfetes();
+  } else { const w=window.open('','_blank');
+    w.document.write(`<html><head><title>Certificado</title><style>body{font-family:Georgia,serif;text-align:center;padding:60px;border:8px double #d4af37;margin:30px}</style></head><body>
+      <h1>CERTIFICADO DE CONQUISTA</h1><p>Quiz do Império · Segundo Reinado no Brasil</p>
+      <h2>${CURRENT.n}</h2><p>da turma ${CURRENT.t} — ${s}/${QUESTIONS.length} acertos (${pct}%) · Menção: ${men}</p>
+      <p>${data}</p><script>window.print()<\/script></body></html>`);
+    w.document.close(); } }
+
+/* ═══════════ MINI-RPG ═══════════ */
+const RPG_NODES = {
+ start:{t:'Brasil do Segundo Reinado: um império de café, coroa e contradições. Quem é você nesta história?', c:[
+   {t:'⛓️ Pessoa escravizada numa fazenda do Vale do Paraíba', city:'esc', next:'e1', msg:'Você nasce entre o cafezal e a senzala — mas sua história não termina aí.'},
+   {t:'🧳 Imigrante italiano(a) recém-chegado(a) ao porto de Santos', city:'imi', next:'i1', msg:'Depois de semanas de mar, o cheiro de café é a primeira coisa que você sente.'},
+   {t:'🎖️ Recruta mandado para a Guerra do Paraguai', city:'sol', next:'s1', msg:'"Voluntário" no papel, recrutado à força na vida: o Exército agora é seu mundo.'} ]},
+ e1:{t:'Madrugada na fazenda: o feitor sopra o buzina. O que você faz?', c:[
+   {t:'☀️ Trabalho na colheita de olho em toda chance de fuga', fx:{cor:1,sab:1}, msg:'Você decora cada trilha da mata.', next:'e2'},
+   {t:'📖 Ensino escondido uma criança a ler na senzala', fx:{sab:2}, msg:'Ler é uma arma que ninguém confisca.', next:'e2'},
+   {t:'🧺 Troco parte da minha roça no mercado da vila', fx:{for:2}, msg:'Moedas escondidas viram esperança.', next:'e2'} ]},
+ e2:{t:'Domingo: dia de trabalhar "para si" na roça própria. Você:', c:[
+   {t:'🌽 Plantar verduras para vender e juntar moedas', fx:{for:2}, msg:'Cada moeda é um passo.', next:'e3'},
+   {t:'🤝 Fazer amizade com um negro livre "ganhador"', fx:{lib:2}, msg:'Ele conhece quem pode ajudar.', next:'e3'},
+   {t:'🌴 Explorar a mata buscando o caminho do quilombo', fx:{cor:2}, msg:'Você encontra marcas de fumaça ao longe.', next:'e3'} ]},
+ e3:{t:'Um advogado abolicionista oferece entrar com sua causa de liberdade. Você:', c:[
+   {t:'⚖️ Confio: junto documentos e testemunhas', fx:{sab:2}, msg:'O processo corre em segredo.', next:'e4'},
+   {t:'💰 Prefiro juntar eu mesmo o preço da minha alforria', fx:{for:2}, msg:'Ninguém fará por você o que você pode fazer.', next:'e4'},
+   {t:'🏃 Liberdade não espera: fujo esta noite!', fx:{cor:2,lib:1}, msg:'A mata esconde seus passos.', next:'e4'} ]},
+ e4:{t:'13 de maio de 1888 chega — mas sua luta começou antes. Como você chegou a este dia?', c:[
+   {t:'📜 Com economias e padrinhos, comprando minha carta', fx:{for:1,lib:2}, msg:'A carta está assinada e registrada.', next:'end'},
+   {t:'🏛️ Nos tribunais, com os abolicionistas', fx:{sab:2,lib:1}, msg:'O juiz reconhece: você é livre por direito.', next:'end'},
+   {t:'🌴 No quilombo, com resistência e comunidade', fx:{cor:2,lib:1}, msg:'Nenhum capitão do mato voltou a subir a serra.', next:'end'} ]},
+ i1:{t:'Em Santos, o fazendeiro propõe o "sistema de parceria". Você:', c:[
+   {t:'🤝 Aceito e sigo com a família para a fazenda', fx:{for:1,cor:1}, msg:'O carro de boi range serra acima.', next:'i2'},
+   {t:'✍️ Exijo as cláusulas do contrato por escrito', fx:{sab:2}, msg:'O escrevente da fazenda não gosta nem um pouco.', next:'i2'},
+   {t:'🏙️ Prefiro trabalhar por jornal (diária) na cidade', fx:{lib:2}, msg:'O porto sempre precisa de braços.', next:'i2'} ]},
+ i2:{t:'Primeira colheita no Oeste Paulista: as contas da parceria não fecham (dívida no armazém!). Você:', c:[
+   {t:'📣 Organizo os colonos para protestar juntos', fx:{cor:2}, msg:'Unidos, vocês reescrevem as contas.', next:'i3'},
+   {t:'📒 Anoto cada despesa num caderno de capa dura', fx:{sab:2}, msg:'Papel e lápis contra a lábia do armazém.', next:'i3'},
+   {t:'☀️ Pego empreitada extra no terreiro para quitar', fx:{for:2}, msg:'Sol a sol, mas a dívida diminui.', next:'i3'} ]},
+ i3:{t:'Anos depois, a fazenda oferece salário fixo (imigração subsidiada). Você:', c:[
+   {t:'💰 Poupo cada lira para comprar meu próprio lote', fx:{for:2}, msg:'O sonho tem escritura e cartório.', next:'i4'},
+   {t:'🗣️ Aprendo português e viro intérprete dos recém-chegados', fx:{sab:2}, msg:'Na hospedaria, todos perguntam por você.', next:'i4'},
+   {t:'🚢 Mando buscar meus pais e irmãos na Itália', fx:{lib:2}, msg:'A família inteira caberá nesta nova terra.', next:'i4'} ]},
+ i4:{t:'1888: abolição. 1889: República. No meio disso tudo, você:', c:[
+   {t:'☕ Já tenho meu próprio cafezal em produção', fx:{for:2}, msg:'Seu sobrenome agora batiza um sítio.', next:'end'},
+   {t:'🏫 Matriculo meus filhos na escola da colônia', fx:{sab:2}, msg:'A próxima geração escreverá a própria história.', next:'end'},
+   {t:'🎉 Celebro: aqui, ninguém é propriedade de ninguém', fx:{lib:2}, msg:'A festa da colônia varou a madrugada.', next:'end'} ]},
+ s1:{t:'No acampamento, descobre que seu colega foi enviado no lugar do filho do senhor dele. Você:', c:[
+   {t:'🗡️ Treino tiro e esgrima todos os dias com ele', fx:{cor:2}, msg:'Dupla que treina junta, sobrevive junta.', next:'s2'},
+   {t:'🗺️ Aprendo a ler mapas com o sargento', fx:{sab:2}, msg:'Quem lê o terreno, volta para casa.', next:'s2'},
+   {t:'🕊️ Prometo ajudar o colega a cobrar a alforria prometida', fx:{lib:2}, msg:'A palavra de um soldado vale ouro.', next:'s2'} ]},
+ s2:{t:'Batalha de Tuiuti (1866), a maior da guerra. Sob fogo cerrado, você:', c:[
+   {t:'🚩 Seguro a posição e protejo a bandeira', fx:{cor:2}, msg:'A linha não recua um palmo.', next:'s3'},
+   {t:'🧭 Guio o batalhão pelo atalho do pântano', fx:{sab:2}, msg:'O mapa que você decorou salva duzentas vidas.', next:'s3'},
+   {t:'🤕 Carrego o colega ferido nas costas', fx:{lib:1,cor:1}, msg:'Ninguém fica para trás.', next:'s3'} ]},
+ s3:{t:'Cerco de Humaitá: a fortaleza fecha o rio. Você:', c:[
+   {t:'🛶 Me ofereço para a travessia mais perigosa', fx:{cor:2}, msg:'Sua canoa fura o bloqueio na madrugada.', next:'s4'},
+   {t:'📐 Calculo o melhor ângulo para a artilharia', fx:{sab:2}, msg:'O terceiro tiro abre a muralha.', next:'s4'},
+   {t:'✉️ Escrevo cartas para os soldados analfabetos', fx:{lib:2}, msg:'Suas palavras atravessam o rio até as famílias.', next:'s4'} ]},
+ s4:{t:'1870: a guerra acaba. Você volta a um Brasil que discute abolição e República. Você:', c:[
+   {t:'📣 Exijo na praça a alforria dos soldados escravizados', fx:{lib:2}, msg:'Quem lutou pela pátria não volta cativo.', next:'end'},
+   {t:'🎓 Viro instrutor na escola do Exército', fx:{sab:2}, msg:'Você ensina a próxima geração a ler mapas — e o país.', next:'end'},
+   {t:'🏪 Uso a pensão para abrir um armazém', fx:{for:2}, msg:'Do rancho militar ao balcão: nova vida.', next:'end'} ]}
+};
+const RPG_ENDS = {
+ esc:{ lib:['🕊️','Livre por direito próprio','Sua carta de alforria virou relíquia de família: a liberdade conquistada com as próprias mãos.'],
+       cor:['🌴','Liderança do quilombo','No alto da serra, você governa um território livre onde ninguém nasce propriedade.'],
+       sab:['📜','Mestre das palavras','Ex-escravizado que lê, escreve e argumenta: você abre uma escola para crianças libertas.'],
+       for:['💰','Do ganho ao próprio negócio','De ganhador de rua a dono de venda: seu nome assina contratos, não senzalas.'] },
+ imi:{ for:['☕','Colono proprietário','A escritura tem seu sobrenome: do contrato de parceria ao cafezal próprio.'],
+       sab:['🗣️','A ponte entre dois mundos','Intérprete e conselheiro na Hospedaria: nenhum imigrante assinará o que não entende.'],
+       lib:['🏠','Família enraizada','Casa, escola e festa da colônia: a nova terra agora tem o seu sangue.'],
+       cor:['🌱','Pioneiro(a) de novas fronteiras','Onde outros viam mata fechada, você abriu lavoura e caminho.'] },
+ sol:{ cor:['🎖️','Herói condecorado','Medalha no peito e histórias que os netos não acreditam: você esteve em Tuiuti.'],
+       sab:['🗺️','Engenheiro do Exército','Seus mapas do Prata viram material de aula na Escola Militar.'],
+       lib:['🕊️','Voz da abolição','Você lutou por um império e voltou para mudá-lo: alforria para quem defendeu a pátria.'],
+       for:['🏪','Do rancho ao armazém','Fornecedor do Exército ontem, comerciante respeitado hoje.'] }
+};
+let RPG=null;
+function resetRPG(){ RPG={city:null,node:'start',stats:{cor:1,sab:1,lib:1,for:1},pending:null}; renderRPG(); }
+const STAT_META=[['cor','🦁','Coragem'],['sab','📜','Sabedoria'],['lib','🕊️','Liberdade'],['for','💰','Fortuna']];
+function statsHTML(){ return `<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">${STAT_META.map(([k,ic,nm])=>`
+  <div class="bg-parch-100 rounded-xl p-3 text-center border border-parch-200">
+    <div class="text-lg">${ic}</div><div class="text-[11px] font-extrabold text-imp-800">${nm}</div>
+    <div class="h-2 bg-parch-300 rounded-full mt-1.5 overflow-hidden"><div class="stat-bar h-full bg-gold-500 rounded-full" style="width:${RPG.stats[k]*10}%"></div></div>
+    <div class="text-[10px] font-bold text-ink-700 mt-0.5">${RPG.stats[k]}/10</div></div>`).join('')}</div>`; }
+function renderRPG(){ const box=$('#rpgBox');
+  if(RPG.pending){ const p=RPG.pending;
+    box.innerHTML=`<div class="bg-white rounded-3xl p-8 shadow-lift border border-parch-200 text-center pop">
+      <div class="text-5xl">${p.icon}</div><p class="font-bold text-ink-800 text-lg mt-4">${p.msg}</p>${statsHTML()}
+      <button id="rpgCont" class="mt-6 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-extrabold px-6 py-3 shadow-card">Continuar →</button></div>`;
+    $('#rpgCont').onclick=()=>{RPG.pending=null;RPG.node=p.next;renderRPG();}; return; }
+  if(RPG.node==='end'){ const st=RPG.stats;
+    const top=['lib','cor','sab','for'].reduce((a,b)=>st[b]>st[a]?b:a,'lib');
+    const [em,title,txt]=RPG_ENDS[RPG.city][top]; chuvaDeConfetes();
+    box.innerHTML=`<div class="bg-white rounded-3xl p-8 sm:p-10 shadow-lift border-2 border-gold-500 text-center pop">
+      <div class="text-6xl">${em}</div><h3 class="font-display text-3xl font-black text-imp-900 mt-3">${title}</h3>
+      <p class="text-ink-700 mt-4 max-w-xl mx-auto">${txt}</p>${statsHTML()}
+      <div class="flex flex-wrap justify-center gap-3 mt-7">
+        <button id="rpgAgain" class="rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-extrabold px-6 py-3 shadow-card">🔄 Jogar novamente</button>
+        <button id="rpgSwap" class="rounded-xl bg-imp-700 hover:bg-imp-800 text-white font-extrabold px-6 py-3 shadow-card">🔁 Trocar de personagem</button>
+      </div></div>`;
+    $('#rpgAgain').onclick=resetRPG; $('#rpgSwap').onclick=resetRPG; return; }
+  const nd=RPG_NODES[RPG.node];
+  box.innerHTML=`<div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lift border border-parch-200 pop">
+    <div class="flex items-center justify-between text-xs font-extrabold text-imp-800">
+      <span>${RPG.city?({esc:'⛓️ Vale do Paraíba',imi:'🧳 Oeste Paulista',sol:'🎖️ Frente de guerra'})[RPG.city]:'🇧 Império do Brasil'} · ${CURRENT.n}</span><span>Mini-RPG</span></div>
+    ${RPG.city?statsHTML():''}
+    <h3 class="font-display text-xl sm:text-2xl font-bold text-imp-900 mt-4 leading-snug">${nd.t}</h3>
+    <div class="grid gap-3 mt-6">${nd.c.map((c,j)=>`<button data-j="${j}" class="opt text-left rounded-xl border-2 border-imp-200 bg-parch-50 px-4 py-3 font-bold text-ink-800 hover:border-gold-500">${c.t}</button>`).join('')}</div></div>`;
+  box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{ const c=nd.c[+b.dataset.j];
+    if(c.city){ RPG.city=c.city; RPG.pending={msg:c.msg,next:c.next,icon:c.city==='esc'?'⛓️':c.city==='imi'?'🧳':'🎖️'}; }
+    else { Object.entries(c.fx||{}).forEach(([k,v])=>RPG.stats[k]=Math.min(10,RPG.stats[k]+v)); RPG.pending={msg:c.msg,next:c.next,icon:'✨'}; }
+    renderRPG(); })); }
+
+/* ═══════════ REVEAL + INIT ═══════════ */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}}),{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+$('#heroArt').innerHTML=SVG.coroa;
+renderChips(); showTopic(0);
+if(CURRENT){ entrar(); } else { renderMural(); resetRPG(); loadQuiz(); }
+</script>
+<script>
+/* ===== CORREÇÃO DO LOGIN ===== */
+(function(){
+  var PREFIXO = document.title.indexOf('Reinado') !== -1 ? 'reinado' : 'hellas';
+  var K_CUR = PREFIXO + '_current_v1';
+  var K_VIS = PREFIXO + '_visitors_v1';
+  var mem = {};
+  function ler(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return (k in mem)?mem[k]:d; } }
+  function gravar(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ mem[k]=v; } }
+  function aviso(t){ var el=document.getElementById('loginErro'); if(el){ el.textContent=t||''; el.classList.toggle('hidden', !t); } }
+
+  window.fazerLogin = function(){
+    var elN=document.getElementById('inpNome'), elT=document.getElementById('inpTurma');
+    var n=(elN?elN.value:'').trim(), t=(elT?elT.value:'').trim();
+    if(!n || !t){ aviso('Preencha seu nome e sua turma para entrar. 🙂'); return; }
+    aviso('');
+    try{
+      CURRENT = { n:n, t:t };
+      gravar(K_CUR, CURRENT);
+      var vis = ler(K_VIS, []); if(!Array.isArray(vis)) vis=[];
+      vis.push({ n:n, t:t, ts:Date.now() });
+      gravar(K_VIS, vis);
+    }catch(e){ CURRENT = { n:n, t:t }; }
+    try{ entrar(); }
+    catch(e){
+      var ov=document.getElementById('loginOverlay'); if(ov) ov.classList.add('hidden');
+      try{ renderMural(); }catch(e2){}
+      try{ renderQuiz();  }catch(e3){}
+      try{ resetRPG();    }catch(e4){}
+    }
+  };
+
+  var form=document.getElementById('loginForm');
+  if(form){
+    form.setAttribute('novalidate','novalidate'); /* validação nativa nunca trava a entrada */
+    form.addEventListener('submit', function(e){ e.preventDefault(); e.stopPropagation(); window.fazerLogin(); });
+  }
+  var btn=document.getElementById('btnEntrar');
+  if(btn){ btn.addEventListener('click', function(e){ e.preventDefault(); window.fazerLogin(); }); }
+
+  /* Se já entrou antes neste computador, deixa nome/turma prontos */
+  var salvo = ler(K_CUR, null);
+  if(salvo){
+    var iN=document.getElementById('inpNome'), iT=document.getElementById('inpTurma');
+    if(iN && salvo.n) iN.value=salvo.n;
+    if(iT && salvo.t) iT.value=salvo.t;
+  }
+})();
+</script>
+</body>
+</html>
