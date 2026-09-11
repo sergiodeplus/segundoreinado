@@ -6,6 +6,7 @@
 <title>Brasil Império · O Segundo Reinado · História</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -187,6 +188,19 @@ const LS = { get(k,d){ try{const v=localStorage.getItem(k);return v?JSON.parse(v
              del(k){ try{localStorage.removeItem(k)}catch(e){} } };
 let CURRENT = LS.get('reinado_current_v1', null);
 const quizKey = () => 'reinado_quiz_v1_' + CURRENT.n + '_' + CURRENT.t;
+
+/* ═══════════════════ APPWRITE (NUVEM) ═══════════════════ */
+window.APPWRITE_CONFIG = {
+  endpoint: 'https://home.zonaeducacional.org/v1',
+  project: '6aa402570030f352e5be',
+  database: 'reinado_db',
+  collection: 'visitantes'
+};
+window.hasAppwrite = APPWRITE_CONFIG.project && APPWRITE_CONFIG.database && APPWRITE_CONFIG.collection;
+if(window.hasAppwrite && window.Appwrite) {
+  window.awClient = new Appwrite.Client().setEndpoint(APPWRITE_CONFIG.endpoint).setProject(APPWRITE_CONFIG.project);
+  window.awDB = new Appwrite.Databases(window.awClient);
+}
 
 /* ═══════════ ILUSTRAÇÕES SVG (estilo "gravura antiga") ═══════════ */
 const INK='#4b3621', PAP='#f6efdf', GOLD='#d4af37', GREEN='#1b583e', COF='#6f4e37';
@@ -564,11 +578,25 @@ const chuvaDeConfetes=()=>{spawn(150,'rain');setTimeout(()=>spawn(90,'rain'),700
 const burstConfetes=()=>spawn(110,'burst');
 
 /* ═══════════ LOGIN / MURAL ═══════════ */
-function renderMural(){
-  const vis=LS.get('reinado_visitors_v1',[]);
-  $('#muralCount').textContent = vis.length? `· ${vis.length} registro(s) de entrada`:'';
+async function renderMural(){
+  let vis = [];
+  $('#muralCount').textContent = window.hasAppwrite ? '· Sincronizando com a nuvem...' : '· Carregando local...';
+  
+  if (window.hasAppwrite && window.awDB) {
+    try {
+      const res = await window.awDB.listDocuments(APPWRITE_CONFIG.database, APPWRITE_CONFIG.collection, [Appwrite.Query.orderDesc('ts'), Appwrite.Query.limit(50)]);
+      vis = res.documents.map(d => ({ n: d.nome, t: d.turma, ts: d.ts }));
+    } catch(e) {
+      console.error("Erro no Appwrite:", e);
+      vis = LS.get('reinado_visitors_v1', []).slice().reverse();
+    }
+  } else {
+    vis = LS.get('reinado_visitors_v1', []).slice().reverse();
+  }
+
+  $('#muralCount').textContent = vis.length ? `· ${vis.length} registro(s) de entrada` : '';
   $('#nomesHint').innerHTML=[...new Set(vis.map(v=>v.n))].map(n=>`<option value="${n}">`).join('');
-  $('#muralList').innerHTML = vis.length? vis.slice().reverse().map(v=>{
+  $('#muralList').innerHTML = vis.length? vis.map(v=>{
     const at=CURRENT&&v.n===CURRENT.n&&v.t===CURRENT.t;
     return `<div class="bg-white rounded-2xl p-4 shadow-card border ${at?'border-gold-500 ring-2 ring-gold-400':'border-parch-200'} reveal on">
       <div class="flex items-center gap-3"><div class="text-3xl">${at?'🏅':''}</div>
@@ -818,18 +846,32 @@ if(CURRENT){ entrar(); } else { renderMural(); resetRPG(); loadQuiz(); }
   function gravar(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ mem[k]=v; } }
   function aviso(t){ var el=document.getElementById('loginErro'); if(el){ el.textContent=t||''; el.classList.toggle('hidden', !t); } }
 
-  window.fazerLogin = function(){
+  window.fazerLogin = async function(){
     var elN=document.getElementById('inpNome'), elT=document.getElementById('inpTurma');
     var n=(elN?elN.value:'').trim(), t=(elT?elT.value:'').trim();
     if(!n || !t){ aviso('Preencha seu nome e sua turma para entrar. 🙂'); return; }
     aviso('');
+    var ts = Date.now();
     try{
       CURRENT = { n:n, t:t };
       gravar(K_CUR, CURRENT);
-      var vis = ler(K_VIS, []); if(!Array.isArray(vis)) vis=[];
-      vis.push({ n:n, t:t, ts:Date.now() });
-      gravar(K_VIS, vis);
     }catch(e){ CURRENT = { n:n, t:t }; }
+
+    if (window.hasAppwrite && window.awDB) {
+      try {
+        await window.awDB.createDocument(APPWRITE_CONFIG.database, APPWRITE_CONFIG.collection, 'unique()', {
+          nome: n, turma: t, ts: ts
+        });
+      } catch(e) {
+        console.error("Erro no Appwrite (salvando localmente):", e);
+        var vis = ler(K_VIS, []); if(!Array.isArray(vis)) vis=[];
+        vis.push({ n:n, t:t, ts:ts }); gravar(K_VIS, vis);
+      }
+    } else {
+      var vis = ler(K_VIS, []); if(!Array.isArray(vis)) vis=[];
+      vis.push({ n:n, t:t, ts:ts }); gravar(K_VIS, vis);
+    }
+
     try{ entrar(); }
     catch(e){
       var ov=document.getElementById('loginOverlay'); if(ov) ov.classList.add('hidden');
