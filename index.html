@@ -44,8 +44,11 @@ tailwind.config = { theme: { extend: {
 <canvas id="confetti" class="fixed inset-0 pointer-events-none z-[70]"></canvas>
 
 <!-- ══════════ PORTÃO DO PAÇO (LOGIN) ══════════ -->
-<div id="loginOverlay" class="fixed inset-0 z-50 bg-imp-950/92 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-  <div class="w-full max-w-md pop">
+<div id="loginOverlay" class="fixed inset-0 z-50 bg-imp-950/92 backdrop-blur-sm min-h-full flex flex-col items-center justify-center p-4 overflow-y-auto py-8">
+  <div class="w-full max-w-md pop mb-6">
+    <video src="https://dev05.nekoweb.org/segundoreinado.mp4" controls class="w-full rounded-2xl shadow-card" preload="metadata"></video>
+  </div>
+  <div class="w-full max-w-md pop shrink-0">
     <div class="bg-parch-50 rounded-3xl shadow-lift overflow-hidden">
       <div class="imp-border"></div>
       <div class="p-8 text-center">
